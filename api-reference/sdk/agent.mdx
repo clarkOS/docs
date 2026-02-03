@@ -1,0 +1,135 @@
+---
+title: "Agent SDK"
+description: "TypeScript SDK for building ClarkOS agents"
+---
+
+## Overview
+
+The `Agent` class is the main entry point for building ClarkOS agents. It wraps the tick system, plugin management, and backend access.
+
+**Reference:** `src/core/agent.ts`
+
+## Creating an Agent
+
+```typescript
+import { Agent } from "./src";
+import { ConvexBackend } from "./src/backend";
+
+const agent = new Agent({
+  backend: new ConvexBackend({ url: process.env.CONVEX_URL }),
+  plugins: []
+});
+```
+
+## Constructor Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `backend` | Backend | Required. Convex or in-memory backend |
+| `config` | AgentConfig | Optional. Override defaults |
+| `plugins` | Plugin[] | Optional. Plugins to register |
+
+## Configuration
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `name` | "Agent" | Agent identifier |
+| `tick.interval` | 60000 | Milliseconds between ticks |
+| `tick.auto` | false | Start ticking automatically |
+| `tick.maxRetries` | 3 | Retry attempts on failure |
+| `memory.maxShortTerm` | 50 | Short-term memory limit |
+| `verbose` | false | Enable debug logging |
+
+**Reference:** Full schema in `src/core/config.ts`
+
+## Lifecycle Methods
+
+```typescript
+agent.start();          // Begin continuous tick execution
+agent.stop();           // Stop execution
+await agent.tick();     // Execute single tick
+await agent.getState(); // Get current state
+agent.isRunning();      // Check execution status
+```
+
+## Plugin Methods
+
+```typescript
+agent.use(plugin);                              // Register plugin
+agent.getPlugin("name");                        // Get by name
+agent.getPlugins();                             // List all
+await agent.executeAction("plugin", "action", params); // Call action
+```
+
+## Memory Access
+
+```typescript
+const memoryStore = agent.memory;
+
+await memoryStore.store({ content: "...", type: "semantic" });
+const memories = await memoryStore.get({ type: "episodic", limit: 10 });
+const results = await memoryStore.search({ query: "...", limit: 5 });
+```
+
+**Reference:** Full interface in `src/memory/store.ts`
+
+## Knowledge Access
+
+```typescript
+const knowledgeStore = agent.knowledge;
+
+await knowledgeStore.add({ text: "...", type: "news", source: "..." });
+const items = await knowledgeStore.get({ limit: 20 });
+const results = await knowledgeStore.search({ query: "...", limit: 10 });
+```
+
+## Types
+
+### AgentState
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `mood` | Mood | neutral, expressive, curious, excited, reflective, concerned |
+| `health` | number | 0-100 |
+| `routine` | Routine | morning, day, evening, overnight |
+| `volatility` | number | 0-1 |
+| `counters` | object | { ticks, feeds } |
+| `lastTick` | string | ISO timestamp |
+| `cryo` | boolean | Hibernation mode |
+
+### MemoryType
+
+`episodic` | `semantic` | `emotional` | `procedural` | `reflection`
+
+### MemoryScope
+
+`short_term` | `working` | `long_term`
+
+## Example
+
+```typescript
+const agent = new Agent({
+  backend: new ConvexBackend({ url: process.env.CONVEX_URL }),
+  plugins: [{
+    name: "logger",
+    version: "1.0.0",
+    onTick(context) {
+      console.log(`Tick: ${context.state.mood}`);
+    }
+  }]
+});
+
+const result = await agent.tick();
+const state = await agent.getState();
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Memory Store" href="/api-reference/sdk/memory-store">
+    Memory system reference.
+  </Card>
+  <Card title="Plugins SDK" href="/api-reference/sdk/plugins">
+    Plugin development reference.
+  </Card>
+</CardGroup>

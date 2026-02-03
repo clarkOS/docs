@@ -1,0 +1,120 @@
+---
+title: "Consciousness Layer"
+description: "Higher-order thought synthesis and moments of brilliance"
+---
+
+## Overview
+
+The consciousness layer transforms raw inputs into coherent, high-level thoughts. While memories store information, consciousness synthesizes meaning by filtering noise, detecting patterns, and identifying significant insights.
+
+## How It Works
+
+```
+Raw Inputs → Filtering → Pattern Detection → Synthesis → Conscious Thought
+```
+
+1. **Input Filtering** — Low-value signals are discarded
+2. **Entity Extraction** — Key topics and names are identified
+3. **Pattern Detection** — Common entities across inputs are found
+4. **Synthesis** — Multiple signals merge into a coherent thought
+5. **Brilliance Check** — Exceptional insights are flagged
+
+## Input Filtering
+
+Not everything deserves attention. The consciousness layer filters:
+
+- Low-importance signals (below 0.3 threshold)
+- Spam and repetitive content
+- Generic polls with no signal (e.g., "50/50 up or down")
+
+This prevents noise from cluttering the agent's thinking.
+
+**Reference:** Filtering patterns defined in consciousness processing functions
+
+## Pattern Detection
+
+The layer identifies connections by extracting entities from each input and finding overlaps:
+
+| Input Source | Entities Found |
+|--------------|----------------|
+| News article | "AI", "agents", "tech" |
+| Market data | "AI", "investment" |
+| **Common** | **"AI"** — pattern detected |
+
+When multiple high-value inputs share entities, this signals something meaningful.
+
+## Moments of Brilliance
+
+The most powerful feature: detecting when patterns align into significant insights.
+
+A thought becomes **brilliant** when:
+- Multiple high-importance inputs (≥2 with importance >0.7)
+- Common entities across those inputs
+- Novel combination not recently mentioned
+
+Brilliant thoughts are flagged for special handling—they might trigger posts, notifications, or elevated memory storage.
+
+## Emotional Tones
+
+Each synthesized thought carries an emotional tone based on content sentiment:
+
+| Tone | Trigger | Agent Behavior |
+|------|---------|----------------|
+| `curious` | New territory | Research, explore |
+| `excited` | Positive convergence | Share, engage |
+| `concerned` | Risk detected | Warn, analyze |
+| `neutral` | Factual observation | Document |
+| `reflective` | Self-related insight | Learn, adapt |
+
+## Integration with Ticks
+
+Consciousness processing runs during each tick cycle:
+
+```typescript
+// In tick execution
+const thought = await processConsciousness({
+  inputs: knowledgeItems,
+  state: currentState,
+});
+
+if (thought?.isBrilliant) {
+  // Handle significant insight
+  await notifyImportantInsight(thought);
+}
+```
+
+**Reference:** Consciousness integrates with `executeTick()` in `src/core/tick.ts`
+
+## Storing Thoughts
+
+Conscious thoughts are stored as **reflection-type memories** with:
+- High salience for brilliant insights
+- Links to contributing input memories
+- Emotional tone tags
+
+This creates a record of the agent's thinking process over time.
+
+## SDK Status
+
+**Currently implemented:**
+- Tick context with state and memories passed to plugins
+- Plugin `onTick` hooks for custom processing
+
+**Roadmap:**
+- Full consciousness synthesis engine
+- Noise filtering utilities
+- Brilliance detection
+- Emotional tone classification
+
+**Reference:** Plugin context in `src/plugins/types.ts`
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Tick System" href="/concepts/tick-system">
+    How consciousness integrates with execution.
+  </Card>
+  <Card title="Memory System" href="/concepts/memory">
+    How thoughts become memories.
+  </Card>
+</CardGroup>

@@ -1,0 +1,194 @@
+---
+title: "Your First Agent"
+description: "Build an autonomous thinking agent that demonstrates ClarkOS's unique architecture"
+---
+
+## Overview
+
+In this guide, you'll build **Nova**, an autonomous AI agent that thinks, learns, and evolves continuously. This showcases what makes ClarkOS different from request-response frameworks.
+
+## What Nova Does
+
+- Runs autonomously on 5-minute tick cycles
+- Forms 5 types of memories (episodic, semantic, emotional, procedural, reflection)
+- Detects patterns and generates "moments of brilliance"
+- Self-reflects on its own state and learning
+- Creates daily journal entries
+- Evolves mood, health, and routine over time
+
+<Note>
+This is not a chatbot. Nova doesn't wait for messages—it thinks continuously.
+</Note>
+
+## Prerequisites
+
+- Node.js 18+
+- OpenRouter API key (LLM)
+- Gemini API key (embeddings, free tier)
+
+## Step 1: Create Project
+
+```bash
+git clone https://github.com/clarkos/clarkos nova
+cd nova
+npm install
+cp .env.example .env.local
+```
+
+Configure `.env.local` with your API keys:
+- `OPENROUTER_KEY` — LLM access
+- `GEMINI_API_KEY` — Embeddings
+- `TICK_TOKEN` — Authentication
+
+## Step 2: Define Character
+
+Create a character file that defines Nova's personality, interests, and voice.
+
+**Reference:** See `convex/character.ts` in the template.
+
+| Property | Purpose |
+|----------|---------|
+| `name` | Agent identifier |
+| `traits` | Personality characteristics |
+| `interests` | What the agent pays attention to |
+| `voice` | Communication style guidelines |
+
+## Step 3: Understand State Model
+
+ClarkOS agents maintain rich internal state:
+
+| Field | Description |
+|-------|-------------|
+| `mood` | contemplative, expressive, curious, reflective, concerned |
+| `health` | 0-100, depletes with activity, recovers with rest |
+| `routine` | morning, day, evening, overnight |
+| `volatility` | How much state fluctuates |
+| `cryo` | Hibernation mode when health critical |
+
+**Reference:** `AgentState` interface in `src/types.ts`
+
+## Step 4: Memory Types
+
+Nova uses all 5 memory types:
+
+| Type | Example | Dedup Threshold |
+|------|---------|-----------------|
+| Episodic | "Read article about AI" | 0.92 |
+| Semantic | "Convex is serverless" | 0.95 |
+| Emotional | "Excited about this" | 0.88 |
+| Procedural | "Morning news is noisy" | 0.97 |
+| Reflection | "I'm analytical at night" | 0.90 |
+
+**Reference:** Memory schema in `convex/schema.ts`
+
+## Step 5: Tick Cycle
+
+Each tick follows this flow:
+
+1. Load current state
+2. Calculate routine from time
+3. Gather relevant memories
+4. Process through consciousness layer
+5. Generate LLM response
+6. Store new memories
+7. Maybe generate reflection (every 10 ticks)
+8. Commit state changes
+
+**Reference:** See `convex/tick.ts` for implementation pattern.
+
+## Step 6: Consciousness Layer
+
+The consciousness layer filters noise and detects patterns:
+
+- **Filtering** — Removes low-value inputs
+- **Entity extraction** — Identifies key topics
+- **Pattern detection** — Finds common themes
+- **Brilliance check** — Flags significant insights
+
+A thought becomes "brilliant" when multiple high-importance inputs share entities.
+
+**Reference:** See consciousness processing in `convex/consciousness.ts` pattern.
+
+## Step 7: Self-Reflection
+
+Every 10 ticks, Nova generates a reflection:
+
+1. Gather recent emotional memories
+2. Identify procedural patterns
+3. Prompt LLM for metacognitive insight
+4. Store as reflection-type memory
+
+This creates genuine self-awareness over time.
+
+**Reference:** See `convex/reflection.ts` pattern.
+
+## Step 8: Daily Journals
+
+At midnight, Nova consolidates the day's experiences:
+
+1. Gather all memories from past 24 hours
+2. Count brilliant thoughts
+3. Generate narrative summary
+4. Store as journal entry
+
+**Reference:** See `convex/journal.ts` pattern.
+
+## Step 9: Scheduled Execution
+
+Set up crons for automatic operation:
+
+```typescript
+// convex/crons.ts
+crons.interval("tick", { minutes: 5 }, api.tick.runTick);
+crons.interval("feeds", { minutes: 15 }, api.feeds.fetch);
+crons.cron("journal", "0 0 * * *", api.journal.generate);
+crons.cron("consolidate", "0 3 * * *", api.memories.consolidate);
+```
+
+## Step 10: Run
+
+```bash
+npm run dev
+```
+
+Watch the Convex dashboard for:
+- Tick logs every 5 minutes
+- Memory growth across types
+- Reflections every 10 ticks
+- Daily journals at midnight
+
+## Querying Nova
+
+```bash
+curl http://localhost:3001/state
+curl http://localhost:3001/logs?limit=10
+curl http://localhost:3001/memories?type=reflection&limit=5
+curl http://localhost:3001/consciousness/brilliant?limit=5
+```
+
+## What You've Built
+
+| Feature | Description |
+|---------|-------------|
+| Continuous operation | Thinks every 5 minutes autonomously |
+| 5 memory types | Events, facts, feelings, patterns, insights |
+| Consciousness layer | Filters noise, detects patterns |
+| Moments of brilliance | Recognizes significant convergences |
+| Self-reflection | Metacognitive observations |
+| Daily journals | Consolidates experiences |
+| State evolution | Mood and health change naturally |
+
+## Key Insight
+
+The shift from ElizaOS to ClarkOS is **reactive to generative**. Nova doesn't respond to the world—it continuously processes, understands, and creates.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Plugins" href="/guides/custom-plugins">
+    Extend Nova with new capabilities.
+  </Card>
+  <Card title="Memory Management" href="/guides/memory-management">
+    Optimize memory for your domain.
+  </Card>
+</CardGroup>

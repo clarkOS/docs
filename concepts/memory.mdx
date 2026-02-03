@@ -1,0 +1,142 @@
+---
+title: "Memory System"
+description: "Multi-layered cognitive memory inspired by human psychology"
+---
+
+## Overview
+
+ClarkOS implements a cognitive memory system with five distinct types, vector embeddings for semantic search, and type-specific deduplication. This goes beyond simple conversation history to model how agents learn and remember.
+
+## Memory Types
+
+| Type | Purpose | Example | Dedup Threshold |
+|------|---------|---------|-----------------|
+| **Episodic** | Specific events | "Read article about AI agents" | 0.92 |
+| **Semantic** | Facts and concepts | "Convex is serverless" | 0.95 |
+| **Emotional** | Feelings about topics | "Excited about this project" | 0.88 |
+| **Procedural** | Learned patterns | "Morning news is often noisy" | 0.97 |
+| **Reflection** | Self-insights | "I'm more analytical at night" | 0.90 |
+
+The **reflection** type enables metacognitive capabilities—agents can reason about their own patterns.
+
+**Reference:** Types defined in `src/core/types.ts`, thresholds in `src/memory/deduplication.ts`
+
+## Memory Structure
+
+Each memory includes rich metadata:
+
+| Field | Description |
+|-------|-------------|
+| `content` | The actual memory text |
+| `type` | One of the 5 memory types |
+| `scope` | short_term, working, or long_term |
+| `importance` | 0-1, how significant |
+| `salience` | 0-1, how attention-grabbing |
+| `confidence` | 0-1, how reliable |
+| `valence` | -1 to 1, emotional charge |
+| `tags` | Categorization labels |
+| `accessCount` | Times accessed |
+| `unique` | Passed deduplication check |
+
+**Reference:** Full interface in `src/core/types.ts`
+
+Embeddings are generated and used for deduplication/search but stored separately from the core Memory structure.
+
+## Deduplication
+
+ClarkOS uses a **3-tier deduplication strategy** to prevent redundant memories:
+
+1. **Exact match** — Identical content is rejected
+2. **Jaccard similarity** — Word overlap >0.85 is rejected
+3. **Embedding similarity** — Type-specific thresholds (see table above)
+
+Lower thresholds (emotional: 0.88) allow similar feelings to merge. Higher thresholds (procedural: 0.97) require near-exact matches to merge patterns.
+
+**Reference:** `checkDuplication()` and `findSimilarMemories()` in `src/memory/deduplication.ts`
+
+## Using the Memory Store
+
+The SDK provides a `MemoryStore` interface for all memory operations:
+
+```typescript
+// Store a memory
+await agent.memory.store({
+  content: "Learned about vector databases",
+  type: "semantic",
+  importance: 0.7,
+});
+
+// Retrieve with filters
+const memories = await agent.memory.get({
+  type: "episodic",
+  limit: 10,
+});
+
+// Semantic search
+const results = await agent.memory.search({
+  query: "database concepts",
+  limit: 5,
+});
+```
+
+**Reference:** `src/memory/store.ts` for MemoryStore implementation
+
+## Salience and Confidence
+
+Two helper functions score memories automatically:
+
+**Salience** measures how attention-grabbing content is:
+- Exclamation marks, caps, urgency words boost salience
+- Routine content scores lower
+
+**Confidence** measures reliability:
+- API sources score higher than user input
+- Verified facts score higher than opinions
+
+**Reference:** `calculateSalience()` and `calculateConfidence()` in `src/memory/deduplication.ts`
+
+## Embeddings
+
+Vector embeddings enable semantic search across memories:
+
+| Provider | Dimensions | Model |
+|----------|------------|-------|
+| Gemini | 768 | text-embedding-004 |
+| OpenAI | 1536 | text-embedding-3-small |
+
+```typescript
+import { createEmbeddingClient, cosineSimilarity } from "./src/llm";
+
+const embedder = createEmbeddingClient(config);
+const result = await embedder.embed("Hello world");
+const similarity = cosineSimilarity(embedding1, embedding2);
+```
+
+**Reference:** `src/llm/embeddings.ts` for embedding client and similarity functions
+
+## Memory Linking (Roadmap)
+
+The architecture supports bidirectional memory links with 7 relationship types:
+
+- `caused_by`, `related_to`, `contradicts`, `elaborates`, `supersedes`, `temporal_before`, `temporal_after`
+
+This enables reasoning about how memories connect.
+
+**Reference:** Link types defined in schema, detection API in development
+
+## Memory Consolidation (Roadmap)
+
+Over time, related memories consolidate into **core memories**—summarized knowledge representing patterns across many individual memories. This mimics how human long-term memory works.
+
+**Reference:** Consolidation implemented in CLARK backend, SDK integration planned
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Consciousness" href="/concepts/consciousness">
+    How memories become thoughts.
+  </Card>
+  <Card title="Memory Management" href="/guides/memory-management">
+    Advanced patterns and tuning.
+  </Card>
+</CardGroup>

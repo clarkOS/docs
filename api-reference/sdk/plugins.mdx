@@ -1,0 +1,170 @@
+---
+title: "Plugins SDK"
+description: "SDK reference for building plugins"
+---
+
+## Overview
+
+Plugins extend agent functionality by hooking into the tick lifecycle, exposing actions, and managing state. They're the primary way to add capabilities like social posting, trading, or custom integrations.
+
+**Reference:** `src/plugins/types.ts`
+
+## Plugin Interface
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | Yes | Unique identifier |
+| `version` | string | Yes | Semver version |
+| `description` | string | No | Human-readable description |
+| `dependencies` | string[] | No | Plugins that must load first |
+| `init` | function | No | Called once on registration |
+| `cleanup` | function | No | Called when agent stops |
+| `onTick` | function | No | Called after every tick |
+| `actions` | object | No | Callable methods |
+
+## Lifecycle Hooks
+
+| Hook | When Called | Use For |
+|------|-------------|---------|
+| `init(agent)` | Plugin registration | Setup, connections, validation |
+| `onTick(context)` | After each tick | React to state, execute actions |
+| `cleanup(agent)` | Agent stops | Close connections, flush buffers |
+
+## TickContext
+
+The context passed to `onTick`:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `state` | AgentState | Current mood, health, routine |
+| `memories` | Memory[] | Retrieved memories for tick |
+| `knowledge` | Knowledge[] | Retrieved knowledge items |
+| `recentLogs` | Log[] | Recent activity logs |
+
+**Reference:** `TickContext` interface in `src/core/types.ts`
+
+## Creating Plugins
+
+### Static Plugin
+
+```typescript
+export const myPlugin: Plugin = {
+  name: "my-plugin",
+  version: "1.0.0",
+  onTick(context) {
+    console.log(`Tick: ${context.state.mood}`);
+  }
+};
+```
+
+### Factory Pattern (Recommended)
+
+Use factories when plugins need configuration or internal state:
+
+```typescript
+export function createMyPlugin(config: MyConfig): Plugin {
+  let state = {};  // Internal state
+  return {
+    name: "my-plugin",
+    version: "1.0.0",
+    onTick(context) { /* use config and state */ }
+  };
+}
+```
+
+**Reference:** See factory examples in `plugins/social.ts`, `plugins/markets.ts`
+
+## Plugin Actions
+
+Actions are methods exposed by plugins, callable via the agent:
+
+```typescript
+actions: {
+  async buy(params, agent) {
+    return { success: true };
+  }
+}
+
+// Call from agent
+await agent.executeAction("plugin-name", "buy", { symbol: "ETH" });
+```
+
+## Registration
+
+```typescript
+// Single plugin
+agent.use(myPlugin);
+
+// Multiple at construction
+new Agent({ backend, plugins: [plugin1, plugin2] });
+
+// Get plugin reference
+const plugin = agent.getPlugin("name");
+const all = agent.getPlugins();
+```
+
+**Reference:** `agent.use()` in `src/core/agent.ts`
+
+## Dependencies
+
+Plugins can declare dependencies that must load first:
+
+```typescript
+{
+  name: "enhanced-twitter",
+  dependencies: ["twitter", "analytics"],
+  init(agent) {
+    const twitter = agent.getPlugin("twitter");
+  }
+}
+```
+
+The agent validates dependency order during registration.
+
+**Reference:** `loadPlugins()` in `src/plugins/loader.ts`
+
+## Configuration Patterns
+
+| Pattern | When to Use |
+|---------|-------------|
+| Environment variables | API keys, feature flags |
+| Factory parameters | Cooldowns, limits, options |
+| Runtime actions | Dynamic reconfiguration |
+
+## Error Handling
+
+Plugins should catch errors to avoid crashing the agent:
+
+```typescript
+onTick(context) {
+  try {
+    await this.riskyOperation();
+  } catch (error) {
+    console.error("Plugin error:", error);
+    // Don't re-throw - let agent continue
+  }
+}
+```
+
+## Testing
+
+```typescript
+const agent = createAgent({
+  backend: new MemoryBackend(),
+  plugins: [myPlugin]
+});
+const result = await agent.tick();
+```
+
+**Reference:** Test patterns in `tests/plugins/`
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Agent SDK" href="/api-reference/sdk/agent">
+    Main agent class reference.
+  </Card>
+  <Card title="Plugin Guide" href="/guides/custom-plugins">
+    Step-by-step plugin development.
+  </Card>
+</CardGroup>

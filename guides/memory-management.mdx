@@ -1,0 +1,173 @@
+---
+title: "Memory Management"
+description: "Advanced techniques for managing agent memory"
+---
+
+## Overview
+
+This guide covers strategies for managing memory in production agents—deduplication tuning, retrieval optimization, and understanding the memory lifecycle.
+
+## Memory Lifecycle
+
+```
+Input → Embedding → Deduplication → Store → Retrieve → Consolidate
+```
+
+1. **Input** — Raw content arrives
+2. **Embedding** — Vector generated for semantic search
+3. **Deduplication** — Checked against existing memories
+4. **Store** — Persisted with metadata
+5. **Retrieve** — Loaded during tick context building
+6. **Consolidate** — Periodically merged into core memories
+
+## Deduplication Tuning
+
+The SDK uses type-specific thresholds. Lower thresholds allow more merging; higher thresholds preserve uniqueness.
+
+| Type | Default | Adjustment Guidance |
+|------|---------|---------------------|
+| Episodic | 0.92 | Lower if events feel redundant |
+| Semantic | 0.95 | Lower if facts don't consolidate |
+| Emotional | 0.88 | Raise if nuanced feelings are lost |
+| Procedural | 0.97 | Keep high—patterns must be precise |
+| Reflection | 0.90 | Raise if self-insights feel repetitive |
+
+**Reference:** `DEDUP_THRESHOLDS` in `src/memory/deduplication.ts`
+
+### Custom Thresholds
+
+Override defaults when checking duplication:
+
+```typescript
+import { checkDuplication, DEDUP_THRESHOLDS } from "./src/memory/deduplication";
+
+const result = checkDuplication(newMemory, existingMemories, {
+  typeThresholds: {
+    ...DEDUP_THRESHOLDS,
+    semantic: 0.90  // More aggressive semantic dedup
+  }
+});
+```
+
+## Finding Similar Memories
+
+Use `findSimilarMemories()` to locate related content without strict deduplication:
+
+```typescript
+import { findSimilarMemories } from "./src/memory/deduplication";
+
+const similar = findSimilarMemories(targetMemory, allMemories, {
+  limit: 5,
+  minSimilarity: 0.6
+});
+```
+
+**Reference:** `findSimilarMemories()` in `src/memory/deduplication.ts`
+
+## Salience and Confidence
+
+Two automatic scoring functions help prioritize memories:
+
+**Salience** — How attention-grabbing is this content?
+- Boosted by: exclamation marks, caps, urgency words
+- Lowered by: routine phrasing, generic content
+
+**Confidence** — How reliable is this information?
+- Boosted by: API sources, verified data
+- Lowered by: user input, opinions
+
+```typescript
+import { calculateSalience, calculateConfidence } from "./src/memory/deduplication";
+
+const salience = calculateSalience("Breaking: Major announcement!");  // ~0.8
+const confidence = calculateConfidence("Price is $100", "api");       // ~0.9
+```
+
+**Reference:** Both functions in `src/memory/deduplication.ts`
+
+## Embedding Providers
+
+The SDK supports multiple embedding providers:
+
+| Provider | Dimensions | Model |
+|----------|------------|-------|
+| Gemini | 768 | text-embedding-004 |
+| OpenAI | 1536 | text-embedding-3-small |
+
+Configuration is loaded from environment variables:
+
+| Variable | Description |
+|----------|-------------|
+| `GEMINI_API_KEY` | Google AI API key |
+| `OPENAI_API_KEY` | OpenAI API key |
+| `EMBEDDING_PROVIDER` | "gemini" or "openai" |
+
+**Reference:** `embeddingConfigFromEnv()` in `src/llm/embeddings.ts`
+
+## Retrieval Patterns
+
+### Filter by Type
+
+```typescript
+const semanticMemories = await agent.memory.get({ type: "semantic", limit: 20 });
+const reflections = await agent.memory.get({ type: "reflection", limit: 10 });
+```
+
+### Semantic Search
+
+```typescript
+const results = await agent.memory.search({ query: "market trends", limit: 10 });
+```
+
+### Get Statistics
+
+```typescript
+const stats = await agent.memory.getStats();
+// { total, byType, byScope, averageImportance }
+```
+
+**Reference:** `MemoryStore` interface in `src/memory/store.ts`
+
+## Memory Consolidation (Roadmap)
+
+Consolidation groups related memories into summarized "core memories." This reduces retrieval overhead while preserving knowledge.
+
+The process:
+1. Cluster similar memories by embedding
+2. Extract common themes
+3. Generate summary content
+4. Link core memory to sources
+
+**Status:** Implemented in CLARK backend, SDK integration planned.
+
+## Memory Linking (Roadmap)
+
+The architecture supports 7 relationship types between memories:
+
+- `caused_by` — Causal relationship
+- `related_to` — General association
+- `contradicts` — Conflicting information
+- `elaborates` — Adds detail
+- `supersedes` — Replaces old info
+- `temporal_before` / `temporal_after` — Time ordering
+
+**Status:** Schema defined, detection API in development.
+
+## Best Practices
+
+- **Tune thresholds** for your domain using real data
+- **Monitor storage growth** and implement pruning if needed
+- **Use metadata** effectively—tags, sources, context
+- **Cache embeddings** to reduce API costs
+- **Batch operations** when storing many memories
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Memory SDK" href="/api-reference/sdk/memory-store">
+    Complete memory store reference.
+  </Card>
+  <Card title="Testing" href="/guides/testing">
+    Test memory operations.
+  </Card>
+</CardGroup>

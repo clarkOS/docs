@@ -1,0 +1,128 @@
+---
+title: "Tick System"
+description: "The heartbeat of autonomous agent execution"
+---
+
+## What is a Tick?
+
+A **tick** is a single execution cycle—the agent's heartbeat. On each tick, the agent wakes, thinks, acts, and sleeps. This enables true autonomy: the agent runs continuously without requiring user interaction.
+
+## Tick Lifecycle
+
+```
+Wake → Load State → Gather Context → Process LLM → Update State → Store Memories → Run Plugins → Sleep
+```
+
+| Phase | Description |
+|-------|-------------|
+| Load State | Retrieve mood, health, routine from backend |
+| Gather Context | Pull relevant memories and knowledge |
+| Process | Send context to LLM, get response |
+| Update State | Apply state changes atomically |
+| Store Memories | Create new memories with embeddings |
+| Run Plugins | Execute `onTick` hooks on all plugins |
+
+**Reference:** `executeTick()` in `src/core/tick.ts`
+
+## Routine Calculation
+
+The agent knows what time it is and adjusts behavior:
+
+| Routine | Hours | Health Drift |
+|---------|-------|--------------|
+| morning | 6-12 | +0.5 (recovery) |
+| day | 12-18 | -0.2 (light drain) |
+| evening | 18-24 | -0.3 (more drain) |
+| overnight | 0-6 | +1.0 (rest) |
+
+**Reference:** `calculateRoutine()` in `src/core/tick.ts`
+
+## Health Drift
+
+Health drifts toward 75 (equilibrium) with routine modifiers applied. The formula includes mean reversion so health doesn't stay at extremes.
+
+When health drops below threshold, the agent enters **cryo mode** (hibernation) and skips normal processing until recovered.
+
+**Reference:** `calculateHealthDrift()` in `src/core/tick.ts`
+
+## Tick Context
+
+Plugins receive a `TickContext` with everything they need:
+
+| Field | Description |
+|-------|-------------|
+| `state` | Current mood, health, routine, volatility, cryo |
+| `memories` | Relevant memories for this tick |
+| `knowledge` | Recent knowledge items |
+| `recentLogs` | Recent activity logs |
+
+**Reference:** `TickContext` interface in `src/core/types.ts`
+
+## Triggering Ticks
+
+**Automatic (Cron):**
+```typescript
+// convex/crons.ts
+crons.interval("tick", { minutes: 5 }, api.tick.runTick);
+```
+
+**Manual (HTTP):**
+```bash
+curl -X POST http://localhost:3001/tick \
+  -H "Authorization: Bearer $TICK_TOKEN"
+```
+
+**Programmatic:**
+```typescript
+await agent.tick();
+```
+
+## Tick Runner
+
+For continuous execution, use the tick runner:
+
+```typescript
+const runner = createTickRunner(backend, plugins, config);
+runner.start();  // Begin automatic ticks
+runner.stop();   // Stop ticking
+```
+
+The runner handles intervals, error recovery, and graceful shutdown.
+
+**Reference:** `createTickRunner()` in `src/core/tick.ts`
+
+## Configuration
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `interval` | 60000ms | Time between ticks |
+| `auto` | false | Start ticking automatically |
+| `maxRetries` | 3 | Retry attempts on failure |
+
+**Reference:** Tick config in `src/core/config.ts`
+
+## Error Handling
+
+Ticks should fail gracefully:
+- Errors are logged, not thrown
+- Health may decrease on failure
+- Agent continues to next tick
+- Plugins can implement their own error handling
+
+## Best Practices
+
+- **Interval selection**: 5 minutes for active agents, 30+ minutes for background tasks
+- **Timeouts**: Set appropriate LLM timeouts to prevent stuck ticks
+- **Monitoring**: Track tick success rate and duration
+- **Health awareness**: Check health before expensive operations
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Plugins" href="/guides/custom-plugins">
+    React to ticks with custom logic.
+  </Card>
+  <Card title="Deployment" href="/guides/deployment">
+    Deploy your ticking agent.
+  </Card>
+</CardGroup>

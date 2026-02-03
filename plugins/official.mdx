@@ -1,0 +1,179 @@
+---
+title: "Built-in Services"
+description: "Data services included with the ink SDK"
+---
+
+The ink SDK includes three built-in services for common data needs. Services run independently of the tick cycle, caching data for efficient access.
+
+**Reference:** `src/services/` directory
+
+## Service Interface
+
+All services implement this interface:
+
+| Method | Description |
+|--------|-------------|
+| `initialize(runtime)` | Setup with agent runtime |
+| `start()` | Begin data fetching |
+| `stop()` | Cleanup and stop |
+| `getData<T>()` | Get cached data |
+| `refresh()` | Force immediate refresh |
+| `getHealth()` | Get status and stats |
+
+**Reference:** `Service` interface in `src/services/types.ts`
+
+## ChanService
+
+Fetches trending threads from SFW 4chan boards. Scores threads by activity (replies + images).
+
+| Config | Default | Description |
+|--------|---------|-------------|
+| `refreshInterval` | 10 min | Time between fetches |
+| `maxCacheAge` | 30 min | Stale cache threshold |
+| `options.boards` | g, sci, biz | Boards to monitor |
+
+**Available SFW boards:** g, sci, lit, mu, his, fit, ck, fa, tg, biz, tv, vg
+
+**Data returned:**
+```typescript
+interface ChanThread {
+  id: string;           // "board-threadNo"
+  board: string;        // e.g., "g"
+  subject: string;      // Thread subject
+  content: string;      // Opening post (truncated)
+  url: string;          // Link to thread
+  replies: number;
+  images: number;
+  timestamp: number;
+  activityScore: number; // replies + images (capped)
+}
+```
+
+**Usage:**
+```typescript
+import { createChanService } from './src/services';
+
+const chan = createChanService({
+  options: { boards: ['g', 'sci', 'biz'] }
+});
+
+await chan.start();
+const threads = await chan.getData<ChanThread[]>();
+```
+
+**Reference:** `src/services/chan.ts`
+
+## NewsService
+
+Fetches and caches news from RSS feeds and APIs.
+
+| Config | Default | Description |
+|--------|---------|-------------|
+| `refreshInterval` | 5 min | Time between fetches |
+| `maxCacheAge` | 30 min | Stale cache threshold |
+| `options.sources` | BBC, CoinDesk, TechCrunch | News sources |
+
+**Data returned:**
+```typescript
+interface NewsItem {
+  id: string;
+  headline: string;
+  summary?: string;
+  source: string;
+  url?: string;
+  publishedAt: number;
+  importance?: number;
+  sentiment?: number;
+  topics?: string[];
+}
+```
+
+**Usage:**
+```typescript
+import { createNewsService } from './src/services';
+
+const news = createNewsService({
+  refreshInterval: 5 * 60 * 1000,
+  options: { sources: customSources }
+});
+
+await news.start();
+const items = await news.getData<NewsItem[]>();
+```
+
+**Reference:** `src/services/news.ts`
+
+## MarketService
+
+Fetches cryptocurrency price data with sentiment analysis.
+
+| Config | Default | Description |
+|--------|---------|-------------|
+| `refreshInterval` | 4 min | Time between fetches |
+| `maxCacheAge` | 10 min | Stale cache threshold |
+| `options.assets` | bitcoin, ethereum, solana | Tracked assets |
+
+**Data returned:**
+```typescript
+interface MarketData {
+  timestamp: number;
+  assets: MarketAsset[];      // Price, change, volume per asset
+  overall: MarketSentiment;   // bullish, bearish, neutral, volatile
+  volatilityIndex?: number;   // 0-1 volatility score
+}
+```
+
+**Usage:**
+```typescript
+import { createMarketService } from './src/services';
+
+const market = createMarketService({
+  options: { assets: ['bitcoin', 'ethereum'] }
+});
+
+await market.start();
+const data = await market.getData<MarketData>();
+```
+
+**Reference:** `src/services/market.ts`
+
+## Service Types
+
+| Type | Description |
+|------|-------------|
+| `news` | News feed aggregation |
+| `market` | Price and market data |
+| `social` | Social media mentions |
+| `calendar` | Calendar/scheduling |
+| `wallet` | Wallet/blockchain data |
+| `storage` | File/data storage |
+| `custom` | User-defined services |
+
+**Reference:** `ServiceType` enum in `src/services/types.ts`
+
+## Creating All Built-ins
+
+```typescript
+import { createBuiltinServices } from './src/services';
+
+const services = createBuiltinServices();
+// Returns [NewsService, MarketService, ChanService]
+```
+
+## Service Health
+
+```typescript
+const health = chan.getHealth();
+// { status, lastRefresh, lastError, refreshCount, errorCount, cacheSize }
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Plugin SDK" href="/api-reference/sdk/plugins">
+    Build plugins that use service data.
+  </Card>
+  <Card title="Custom Plugins" href="/guides/custom-plugins">
+    Create your own integrations.
+  </Card>
+</CardGroup>

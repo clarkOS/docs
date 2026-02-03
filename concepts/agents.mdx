@@ -1,0 +1,113 @@
+---
+title: "Agents"
+description: "Understanding ClarkOS agent architecture"
+---
+
+## What is CLARK?
+
+**C**ontinuously **L**earning **A**gentic **R**ealtime **K**nowledgebase
+
+ClarkOS agents are **generative**, not reactive. Instead of waiting for user input, they run on continuous tick cycles—thinking, learning, and producing output independently.
+
+## Reactive vs Generative
+
+| Aspect | Reactive (ElizaOS) | Generative (ClarkOS) |
+|--------|-------------------|----------------------|
+| Execution | Waits for input | Continuous tick cycle |
+| Output | Response to prompt | Artifacts from internal state |
+| Memory | Conversation history | 5-type cognitive model |
+| Presence | When invoked | Persistent |
+
+## Agent Lifecycle
+
+Each tick follows this sequence:
+
+1. **Load State** — Retrieve mood, health, routine from backend
+2. **Gather Context** — Pull relevant memories and knowledge
+3. **Process** — Send context to LLM
+4. **Update State** — Apply changes atomically
+5. **Generate Artifacts** — Produce text, images, journals
+6. **Store Memories** — Create memories with embeddings
+7. **Execute Plugins** — Run plugin `onTick` hooks
+
+**Reference:** `src/core/tick.ts` contains `executeTick()` which orchestrates this flow.
+
+## Agent State
+
+Every agent maintains internal state that persists across ticks:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `mood` | string | Emotional state (neutral, expressive, curious, excited, reflective, concerned) |
+| `health` | number | Operational capacity 0-100, drifts based on routine |
+| `routine` | string | Time awareness (morning, day, evening, overnight) |
+| `volatility` | number | Behavioral variance 0-1 |
+| `cryo` | boolean | Hibernation mode when health critically low |
+
+**Reference:** State types defined in `src/core/types.ts`
+
+### Health Drift
+
+Health naturally drifts toward 75 (equilibrium) with routine-based modifiers:
+- Morning: +0.5 recovery
+- Day: -0.2 light drain
+- Evening: -0.3 more drain
+- Overnight: +1.0 rest recovery
+
+**Reference:** `calculateHealthDrift()` in `src/core/tick.ts`
+
+### Routine Awareness
+
+Agents know what time it is and adjust behavior accordingly:
+
+| Routine | Hours | Behavior |
+|---------|-------|----------|
+| morning | 6-12 | Recovery, planning |
+| day | 12-18 | Peak activity |
+| evening | 18-24 | Wind down, reflection |
+| overnight | 0-6 | Minimal activity |
+
+**Reference:** `calculateRoutine()` in `src/core/tick.ts`
+
+## Creating an Agent
+
+The `Agent` class wraps the tick system, plugins, and backend:
+
+```typescript
+import { Agent } from "./src";
+import { ConvexBackend } from "./src/backend";
+
+const agent = new Agent({
+  backend: new ConvexBackend({ url: process.env.CONVEX_URL }),
+  plugins: []
+});
+
+await agent.tick();     // Single execution
+agent.start();          // Continuous execution
+```
+
+**Reference:** `src/core/agent.ts` for the Agent class implementation.
+
+## Configuration
+
+Configuration is Zod-validated with sensible defaults:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `tick.interval` | 60000 | Milliseconds between ticks |
+| `tick.auto` | false | Start ticking automatically |
+| `memory.maxShortTerm` | 50 | Short-term memory limit |
+| `verbose` | false | Enable debug logging |
+
+**Reference:** `src/core/config.ts` contains schema and `createConfig()`.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Memory System" href="/concepts/memory">
+    How agents store and retrieve memories.
+  </Card>
+  <Card title="Tick System" href="/concepts/tick-system">
+    Deep dive into continuous execution.
+  </Card>
+</CardGroup>

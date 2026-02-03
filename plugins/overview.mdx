@@ -1,0 +1,113 @@
+---
+title: "Plugin Overview"
+description: "Extending agents with plugins and services"
+---
+
+The ink SDK provides two extension mechanisms: **Plugins** for tick lifecycle hooks and **Services** for background data fetching.
+
+## Plugins vs Services
+
+| Aspect | Plugins | Services |
+|--------|---------|----------|
+| Purpose | React to ticks, expose actions | Fetch and cache data |
+| Lifecycle | Tied to tick cycle | Independent background |
+| Interface | `onTick`, `actions` | `getData`, `refresh` |
+| Reference | `src/plugins/types.ts` | `src/services/types.ts` |
+
+## Plugin Interface
+
+Plugins hook into the agent tick lifecycle:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | string | Unique identifier |
+| `version` | string | Semver version |
+| `init` | function | Called on registration |
+| `cleanup` | function | Called on agent stop |
+| `onTick` | function | Called after each tick |
+| `actions` | object | Callable methods |
+
+**Reference:** `Plugin` interface in `src/plugins/types.ts`
+
+## Service Interface
+
+Services run independently, caching data:
+
+| Method | Description |
+|--------|-------------|
+| `initialize(runtime)` | Setup with runtime context |
+| `start()` | Begin fetching |
+| `stop()` | Cleanup |
+| `getData<T>()` | Get cached data |
+| `refresh()` | Force refresh |
+| `getHealth()` | Status and stats |
+
+**Reference:** `Service` interface in `src/services/types.ts`
+
+## Built-in Services
+
+| Service | Description | Reference |
+|---------|-------------|-----------|
+| `ChanService` | 4chan SFW board threads | `src/services/chan.ts` |
+| `NewsService` | RSS/API news aggregation | `src/services/news.ts` |
+| `MarketService` | Crypto price data | `src/services/market.ts` |
+
+```typescript
+import { createChanService, createNewsService, createMarketService } from './src/services';
+
+const chan = createChanService({ options: { boards: ['g', 'sci'] } });
+const news = createNewsService();
+const market = createMarketService();
+```
+
+## Creating a Plugin
+
+```typescript
+import { definePlugin } from './src/plugins';
+
+export const myPlugin = definePlugin({
+  name: "my-plugin",
+  version: "1.0.0",
+  onTick(context) {
+    console.log(`Mood: ${context.state.mood}`);
+  }
+});
+```
+
+**Reference:** `definePlugin()` in `src/plugins/loader.ts`
+
+## Plugin Utilities
+
+| Function | Description |
+|----------|-------------|
+| `definePlugin(def)` | Create and validate plugin |
+| `validatePlugin(obj)` | Check plugin structure |
+| `loadPlugin(path)` | Dynamic import |
+| `sortPluginsByDependencies(plugins)` | Resolve load order |
+
+**Reference:** `src/plugins/loader.ts`
+
+## Service Types
+
+| Type | Description |
+|------|-------------|
+| `news` | News feeds |
+| `market` | Price data |
+| `social` | Social mentions |
+| `calendar` | Scheduling |
+| `wallet` | Blockchain data |
+| `storage` | File storage |
+| `custom` | User-defined |
+
+**Reference:** `ServiceType` enum in `src/services/types.ts`
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Built-in Services" href="/plugins/official">
+    NewsService and MarketService details.
+  </Card>
+  <Card title="Custom Plugins" href="/guides/custom-plugins">
+    Build your own plugins.
+  </Card>
+</CardGroup>

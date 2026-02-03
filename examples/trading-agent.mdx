@@ -1,0 +1,145 @@
+---
+title: "Trading Agent"
+description: "An agent that monitors markets and makes paper trades"
+---
+
+## Overview
+
+This example demonstrates a trading agent that monitors cryptocurrency markets, forms opinions based on data, and makes paper trading decisions. It shows how to build plugins that work together.
+
+## What It Does
+
+- Fetches real-time market data from CoinGecko
+- Makes paper trading decisions based on agent mood and market conditions
+- Tracks portfolio performance over time
+- Only trades when agent is expressive and healthy
+
+## Architecture
+
+```
+Market Data Plugin ──┐
+                     ├──► Agent Tick ──► Trading Decision ──► Paper Portfolio
+News Plugin ─────────┘
+```
+
+Two plugins work together:
+1. **Markets Plugin** — Fetches and caches price data
+2. **Paper Trading Plugin** — Manages portfolio, executes trades
+
+## Markets Plugin
+
+Fetches cryptocurrency prices and detects significant moves.
+
+**Key features:**
+- Configurable symbol list
+- Automatic refresh on interval
+- Caches data between ticks
+- Actions: `getMarkets()`, `getPrice(symbol)`
+
+```typescript
+export function createMarketsPlugin(config: {
+  symbols: string[];
+  refreshMinutes: number;
+}): Plugin {
+  // Fetch from CoinGecko API
+  // Cache between refreshes
+  // Log significant moves (>5%)
+}
+```
+
+**Reference:** See `plugins/markets.ts` pattern in the repository.
+
+## Paper Trading Plugin
+
+Manages a simulated portfolio with position limits.
+
+**Key features:**
+- Initial cash balance
+- Max position size (% of portfolio)
+- Only trades when mood is expressive and health >50
+- Actions: `buy(symbol, price)`, `sell(symbol, price)`, `getPortfolio()`
+
+```typescript
+export function createPaperTradingPlugin(config: {
+  initialCash: number;
+  maxPositionPercent: number;
+}): Plugin {
+  // Track positions and cash
+  // Enforce position limits
+  // Log trades and P&L
+}
+```
+
+**Reference:** See `plugins/paper-trading.ts` pattern in the repository.
+
+## Plugin Dependencies
+
+The trading plugin depends on the markets plugin:
+
+```typescript
+{
+  name: "paper-trading",
+  dependencies: ["markets"],
+  // ...
+}
+```
+
+This ensures markets data is available when making trading decisions.
+
+## Agent Setup
+
+```typescript
+const agent = new Agent({
+  backend: new ConvexBackend({ url: process.env.CONVEX_URL }),
+  plugins: [
+    createMarketsPlugin({
+      symbols: ["bitcoin", "ethereum", "solana"],
+      refreshMinutes: 5,
+    }),
+    createPaperTradingPlugin({
+      initialCash: 10000,
+      maxPositionPercent: 0.2,  // Max 20% per position
+    }),
+  ],
+});
+```
+
+## Risk Controls
+
+This example includes several safeguards:
+
+| Control | Description |
+|---------|-------------|
+| Position limits | Max 20% of portfolio per trade |
+| Mood gating | Only trades when expressive |
+| Health threshold | Requires health >50 |
+| Paper trading | No real money at risk |
+
+## Running
+
+```bash
+npm run dev
+
+# Check portfolio
+curl http://localhost:3001/actions/paper-trading/getPortfolio
+
+# Manual trade (for testing)
+curl -X POST http://localhost:3001/actions/paper-trading/buy \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"symbol": "ETH", "price": 2000}'
+```
+
+<Warning>
+This is for educational purposes only. Never trade real money based on AI agent decisions without proper risk management and human oversight.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Social Agent" href="/examples/social-agent">
+    Build an agent that posts content.
+  </Card>
+  <Card title="Custom Plugins" href="/guides/custom-plugins">
+    Learn plugin development patterns.
+  </Card>
+</CardGroup>

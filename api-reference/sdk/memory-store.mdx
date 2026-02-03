@@ -1,0 +1,160 @@
+---
+title: "Memory Store SDK"
+description: "SDK reference for the memory system"
+---
+
+## Overview
+
+The `MemoryStore` interface provides methods for storing, retrieving, and managing agent memories.
+
+**Reference:** `src/memory/store.ts`
+
+## Getting the Store
+
+```typescript
+// From agent
+const memory = agent.memory;
+
+// Or create standalone
+import { createMemoryStore } from "./src/memory";
+import { MemoryBackend } from "./src/backend";
+const memory = createMemoryStore(new MemoryBackend());
+```
+
+## Methods
+
+| Method | Description |
+|--------|-------------|
+| `store(options)` | Store a new memory |
+| `get(options)` | Retrieve with filters |
+| `search(options)` | Semantic search |
+| `getById(id)` | Get specific memory |
+| `update(id, updates)` | Modify a memory |
+| `delete(id)` | Remove a memory |
+| `getStats()` | Get statistics |
+
+## Storing Memories
+
+```typescript
+const memory = await memoryStore.store({
+  content: "Learned about vector databases",
+  type: "semantic",          // episodic, semantic, emotional, procedural, reflection
+  scope: "short_term",       // short_term, working, long_term
+  importance: 0.7,           // 0-1
+  tags: ["learning"],
+  sourceType: "tick",
+  deduplicate: true,         // Check for duplicates
+});
+```
+
+## Retrieving Memories
+
+```typescript
+// With filters
+const memories = await memoryStore.get({
+  type: "semantic",
+  scope: "long_term",
+  limit: 10,
+  minImportance: 0.5,
+});
+
+// By ID
+const memory = await memoryStore.getById("memory_id");
+```
+
+## Searching
+
+```typescript
+const results = await memoryStore.search({
+  query: "vector databases",
+  type: "semantic",          // Optional filter
+  limit: 10,
+  threshold: 0.6,            // Min similarity
+});
+```
+
+## Updating and Deleting
+
+```typescript
+await memoryStore.update("memory_id", {
+  importance: 0.9,
+  tags: ["important"],
+});
+
+await memoryStore.delete("memory_id");
+```
+
+## Statistics
+
+```typescript
+const stats = await memoryStore.getStats();
+// { total, byType, byScope, averageImportance }
+```
+
+## Deduplication Utilities
+
+**Reference:** `src/memory/deduplication.ts`
+
+```typescript
+import { checkDuplication, findSimilarMemories, DEDUP_THRESHOLDS } from "./src/memory/deduplication";
+
+// Check if duplicate
+const result = checkDuplication(newMemory, existingMemories);
+// { isUnique, reason, matchedMemoryId, similarity }
+
+// Find similar without strict dedup
+const similar = findSimilarMemories(memory, allMemories, { limit: 5, minSimilarity: 0.6 });
+```
+
+### Default Thresholds
+
+| Type | Threshold |
+|------|-----------|
+| episodic | 0.92 |
+| semantic | 0.95 |
+| emotional | 0.88 |
+| procedural | 0.97 |
+| reflection | 0.90 |
+
+## Salience and Confidence
+
+```typescript
+import { calculateSalience, calculateConfidence } from "./src/memory/deduplication";
+
+const salience = calculateSalience("Breaking news!");  // 0-1
+const confidence = calculateConfidence("Data", "api"); // 0-1
+```
+
+## Embeddings
+
+**Reference:** `src/llm/embeddings.ts`
+
+```typescript
+import { createEmbeddingClient, cosineSimilarity } from "./src/llm";
+
+const embedder = createEmbeddingClient(config);
+const result = await embedder.embed("Hello world");
+
+const similarity = cosineSimilarity(embedding1, embedding2);
+```
+
+## Backend Support
+
+| Method | Convex | In-Memory |
+|--------|--------|-----------|
+| `store()` | Yes | Yes |
+| `get()` | Yes | Yes |
+| `search()` | Vector | Text |
+| `update()` | Optional | Yes |
+| `delete()` | Optional | Yes |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Agent SDK" href="/api-reference/sdk/agent">
+    Main agent class reference.
+  </Card>
+  <Card title="Memory Guide" href="/guides/memory-management">
+    Advanced memory patterns.
+  </Card>
+</CardGroup>

@@ -1,0 +1,148 @@
+---
+title: "Installation"
+description: "Set up ClarkOS in your project"
+---
+
+## Clone the Template
+
+The fastest way to get started:
+
+```bash
+git clone https://github.com/clarkos/clarkos my-agent
+cd my-agent
+npm install
+```
+
+This gives you a complete project with Convex backend, Next.js frontend, and all dependencies configured.
+
+## Manual Installation
+
+For existing projects or custom setups:
+
+<Steps>
+  <Step title="Install packages">
+    ```bash
+    npm install convex
+    ```
+  </Step>
+
+  <Step title="Initialize Convex">
+    ```bash
+    npx convex init
+    ```
+
+    This creates the `convex/` directory for your backend functions.
+  </Step>
+
+  <Step title="Add schema">
+    Create `convex/schema.ts`:
+
+    ```typescript
+    import { defineSchema, defineTable } from "convex/server";
+    import { v } from "convex/values";
+
+    export default defineSchema({
+      // Agent state (singleton)
+      state: defineTable({
+        mood: v.string(),
+        health: v.number(),
+        routine: v.string(),
+        volatility: v.number(),
+        summary: v.string(),
+        updatedAt: v.number(),
+      }),
+
+      // Activity logs
+      logs: defineTable({
+        mood: v.string(),
+        health: v.number(),
+        routine: v.string(),
+        summary: v.string(),
+        detail: v.string(),
+        timestamp: v.number(),
+      }).index("by_timestamp", ["timestamp"]),
+
+      // Memory system
+      memories: defineTable({
+        type: v.string(),
+        content: v.string(),
+        embedding: v.optional(v.array(v.float64())),
+        importance: v.number(),
+        createdAt: v.number(),
+      })
+        .index("by_type", ["type"])
+        .index("by_importance", ["importance"]),
+    });
+    ```
+  </Step>
+
+  <Step title="Create tick function">
+    Create `convex/tick.ts` with your agent's execution logic. See the [basic agent example](/examples/basic-agent) for a complete implementation.
+  </Step>
+</Steps>
+
+## Environment Variables
+
+Create `.env.local`:
+
+```bash
+# Required
+NEXT_PUBLIC_CONVEX_URL=your-convex-deployment-url
+OPENROUTER_KEY=your-openrouter-api-key
+
+# Optional
+GEMINI_API_KEY=your-gemini-key  # For embeddings
+TICK_TOKEN=secure-random-token  # Auth for tick endpoint
+WRITE_TOKEN=secure-random-token # Auth for write operations
+```
+
+### Getting API Keys
+
+**Convex URL** - Run `npx convex dev` and copy the deployment URL.
+
+**OpenRouter Key** - Sign up at [openrouter.ai](https://openrouter.ai) and create an API key.
+
+**Gemini API Key** - Create at [Google AI Studio](https://aistudio.google.com) for embeddings.
+
+## Project Structure
+
+```
+my-agent/
+├── app/                    # Next.js frontend
+│   ├── page.tsx
+│   └── layout.tsx
+├── convex/                 # Convex backend
+│   ├── _generated/         # Auto-generated
+│   ├── schema.ts           # Database schema
+│   ├── tick.ts             # Tick execution
+│   ├── http.ts             # HTTP endpoints
+│   └── memory/             # Memory functions
+├── .env.local              # Environment variables
+└── package.json
+```
+
+## Verify Installation
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Check the health endpoint:
+
+```bash
+curl http://localhost:3001/health
+# {"status":"ok"}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" href="/quickstart">
+    Build your first agent
+  </Card>
+  <Card title="Core Concepts" href="/concepts/agents">
+    Understand the architecture
+  </Card>
+</CardGroup>

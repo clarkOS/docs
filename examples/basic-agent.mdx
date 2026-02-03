@@ -1,0 +1,125 @@
+---
+title: "Basic Agent"
+description: "A minimal autonomous agent example"
+---
+
+## Overview
+
+This example shows a minimal ClarkOS agent that ticks autonomously, maintains state, and logs activity. It demonstrates the core patterns without extra complexity.
+
+## What It Does
+
+- Ticks every 5 minutes via Convex cron
+- Maintains mood, health, and routine state
+- Logs each tick for historical reference
+- Exposes HTTP endpoints for monitoring
+
+## Project Structure
+
+```
+my-agent/
+├── convex/
+│   ├── schema.ts      # Database tables
+│   ├── tick.ts        # Tick execution logic
+│   ├── crons.ts       # Scheduled execution
+│   └── http.ts        # REST endpoints
+└── .env.local         # API keys
+```
+
+## Schema
+
+Define three tables: `state` (singleton), `logs` (history), and `memories`.
+
+**Reference:** See `convex/schema.ts` in the template repository.
+
+| Table | Purpose |
+|-------|---------|
+| `state` | Single row with current mood, health, routine |
+| `logs` | Historical tick results |
+| `memories` | Agent memories with embeddings |
+
+## Tick Logic
+
+The tick function:
+1. Loads current state
+2. Calculates routine from time
+3. Calls LLM with context
+4. Commits new state
+5. Logs the result
+
+**Reference:** See `convex/tick.ts` in the template repository.
+
+Key functions:
+- `getState` — Query to fetch current state
+- `runTick` — Action that orchestrates the tick
+- `commit` — Mutation to persist results
+
+## Scheduled Execution
+
+Use Convex crons for automatic ticking:
+
+```typescript
+// convex/crons.ts
+import { cronJobs } from "convex/server";
+import { api } from "./_generated/api";
+
+const crons = cronJobs();
+crons.interval("tick", { minutes: 5 }, api.tick.runTick);
+
+export default crons;
+```
+
+## HTTP Endpoints
+
+Expose monitoring and control endpoints:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check |
+| `/state` | GET | Current agent state |
+| `/tick` | POST | Manual tick trigger (authenticated) |
+
+**Reference:** See `convex/http.ts` in the template repository.
+
+## Running
+
+```bash
+npm install convex
+npx convex dev
+
+# Test endpoints
+curl http://localhost:3001/health
+curl http://localhost:3001/state
+curl -X POST http://localhost:3001/tick -H "Authorization: Bearer $TICK_TOKEN"
+```
+
+## Extending
+
+**Add memory storage:**
+```typescript
+// After committing state
+await ctx.runMutation(api.memories.store, {
+  type: "episodic",
+  content: result.detail,
+  importance: 0.5,
+});
+```
+
+**Add plugins:**
+```typescript
+const agent = new Agent({
+  backend,
+  plugins: [loggerPlugin, analyticsPlugin]
+});
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Trading Agent" href="/examples/trading-agent">
+    Add market data and paper trading.
+  </Card>
+  <Card title="Your First Agent" href="/guides/your-first-agent">
+    Comprehensive walkthrough.
+  </Card>
+</CardGroup>
