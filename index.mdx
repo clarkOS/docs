@@ -1,6 +1,6 @@
 ---
 title: "ClarkOS"
-description: "Build autonomous AI agents with persistent memory and realtime intelligence"
+description: "Build autonomous agents with persistent memory & realtime intelligence"
 ---
 
 <img
@@ -9,9 +9,46 @@ description: "Build autonomous AI agents with persistent memory and realtime int
   style={{ borderRadius: '8px', marginBottom: '2rem', maxWidth: '600px' }}
 />
 
-> **C**ontinuously **L**earning **A**gentic **R**ealtime **K**nowledgebase
+> **C**ontinuously **L**earning **A**gentic **R**ealtime **K**nowledgebase **OS**
 
-ClarkOS is a TypeScript-first agent framework built on Convex serverless infrastructure. It provides the architecture for agents that operate continuously, generate creative output, and maintain persistent presence across web and social platforms.
+**always on. always learning.**
+
+ClarkOS is a TypeScript-first agent framework built on Convex serverless infrastructure. It provides the architecture for agents that operate continuously, maintain persistent memory, and evolve through autonomous tick cycles.
+
+<CardGroup cols={3}>
+  <Card title="Live Demo" icon="globe" href="https://clark.wiki">
+    See CLARK in action
+  </Card>
+  <Card title="GitHub" icon="github" href="https://github.com/clarkOS/clark">
+    View the source
+  </Card>
+  <Card title="X / Twitter" icon="twitter" href="https://x.com/clarkwiki">
+    Follow updates
+  </Card>
+</CardGroup>
+
+---
+
+## SDK vs CLARK Demo
+
+This documentation covers the **ClarkOS SDK** - the foundation for building autonomous agents. The live demo at [clark.wiki](https://clark.wiki) runs **CLARK**, a full implementation with additional features.
+
+| Feature | SDK (This Repo) | CLARK Demo |
+|---------|-----------------|------------|
+| Tick-based execution | ✅ | ✅ |
+| 5 memory types | ✅ | ✅ |
+| Type-specific deduplication | ✅ | ✅ |
+| Plugin system | ✅ | ✅ |
+| Multi-provider LLM | ✅ | ✅ |
+| Terminal UI | ✅ | - |
+| Memory linking | Schema only | ✅ Full |
+| Memory consolidation | Schema only | ✅ Full |
+| Consciousness synthesis | Templates only | ✅ Full |
+| Daily journals | Schema only | ✅ Full |
+| Chat with presence | - | ✅ |
+| Market analysis | - | ✅ |
+
+---
 
 ## Framework Comparison
 
@@ -20,19 +57,17 @@ ClarkOS is a TypeScript-first agent framework built on Convex serverless infrast
 | **Execution Model** | Request-response | Continuous tick cycle |
 | **Memory Types** | 1 (conversation) | 5 (episodic, semantic, emotional, procedural, reflection) |
 | **Memory Deduplication** | Single threshold (0.95) | Type-specific thresholds |
-| **Memory Relationships** | None | Bidirectional linking with 7 relationship types *(Roadmap)* |
-| **Memory Consolidation** | None | Automatic clustering into core knowledge *(Roadmap)* |
+| **Memory Relationships** | None | Bidirectional linking (7 types) *(Schema ready)* |
+| **Memory Consolidation** | None | Core memory clustering *(Schema ready)* |
 | **State Model** | Minimal | Mood, health, routine, volatility |
-| **Artifact Generation** | On request | Autonomous (text, images, journals) |
-| **Presence** | When invoked | Persistent (livestream, web, social) |
-| **Consciousness Layer** | None | Input filtering, thought synthesis, pattern detection |
-| **Self-Reflection** | None | Metacognitive insight generation |
 | **Time Awareness** | None | Routine-based behavior (morning, day, evening, overnight) |
 | **Backend** | Custom adapters | Convex serverless (real-time, transactional) |
 
+---
+
 ## Architecture Overview
 
-Standard agent frameworks implement a request-response pattern: the agent waits for input, processes it, and returns output. ClarkOS implements a generative architecture where agents operate on continuous tick cycles independent of external interaction.
+ClarkOS implements a generative architecture where agents operate on continuous tick cycles independent of external interaction.
 
 ### Continuous Operation
 
@@ -41,79 +76,72 @@ Agents execute on configurable tick intervals (default 5 minutes). Each tick:
 1. Loads current state and relevant memory context
 2. Processes through the configured LLM
 3. Updates internal state (mood, health, routine awareness)
-4. Generates output artifacts (text, images, journal entries)
-5. Stores new memories with embeddings and metadata
-
-This model enables agents that produce content, update presence, and evolve state whether or not they receive external input.
-
-### Generative Output
-
-ClarkOS agents generate artifacts as part of their tick cycle:
-
-| Output Type | Description |
-|-------------|-------------|
-| **Text** | Synthesized thoughts, social posts, written content |
-| **Images** | Paintings generated from internal state and mood |
-| **Journals** | Daily consolidation of experiences into narrative |
-| **State Updates** | Web presence, profile updates, status changes |
-
-Artifacts are stored with full provenance (triggering memories, mood at creation, confidence scores).
+4. Stores new memories with embeddings and metadata
+5. Executes plugin hooks
 
 ### Memory Architecture
 
 Five memory types model different aspects of cognition:
 
-- **Episodic** - Specific events and experiences
-- **Semantic** - Facts, concepts, learned information
-- **Emotional** - Affective associations with topics and entities
-- **Procedural** - Learned patterns, triggers, and responses
-- **Reflection** - Metacognitive insights about the agent's own state
+- **Episodic** - Specific events and experiences (0.92 dedup threshold)
+- **Semantic** - Facts, concepts, learned information (0.95)
+- **Emotional** - Affective associations with topics and entities (0.88)
+- **Procedural** - Learned patterns, triggers, and responses (0.97)
+- **Reflection** - Metacognitive insights about the agent's own state (0.90)
 
-Memories include vector embeddings for semantic retrieval. Bidirectional linking and consolidation into core knowledge are on the roadmap.
+Memories include vector embeddings for semantic retrieval and deduplication.
 
-### Consciousness Layer
+### Terminal UI
 
-Raw inputs (news feeds, market data, social mentions) pass through a consciousness layer before reaching the agent's decision process. This layer:
+The SDK includes a React Ink-based terminal UI for monitoring your agent:
 
-- Filters low-signal inputs (e.g., repetitive daily polls)
-- Synthesizes multiple signals into coherent thoughts
-- Detects pattern convergence across memory and inputs
-- Assigns emotional tone to synthesized thoughts
-
-### Presence Layer
-
-ClarkOS includes infrastructure for continuous agent presence:
-
-- **Livestream** - Real-time visualization with text-to-speech output
-- **Web** - Automatic site and profile updates
-- **Social** - Scheduled and reactive posting via plugins
-- **API** - HTTP endpoints for state queries and external triggers
+```
+┌─────────────────────────────────────────────┐
+│  CLARK - Autonomous Agent                    │
+│  Mood: curious | Health: 78 | Routine: day  │
+├─────────────────────────────────────────────┤
+│      ╭──────────╮                           │
+│      │  ◉    ◉  │                           │
+│      │    ──    │                           │
+│      ╰──────────╯                           │
+└─────────────────────────────────────────────┘
+```
 
 ## Technical Stack
 
-- **Runtime**: Node.js with TypeScript
+- **Runtime**: Node.js 18+ with TypeScript
 - **Backend**: Convex serverless (real-time subscriptions, transactional mutations)
-- **Embeddings**: Google text-embedding-004 or OpenAI
-- **LLM**: Any OpenRouter-compatible model
-- **Storage**: Convex tables with vector search
+- **Embeddings**: Google Gemini (free tier) or OpenAI
+- **LLM**: OpenRouter, OpenAI, Anthropic, or custom
+- **UI**: React Ink (terminal-based)
+- **Testing**: Jest (179 tests)
+
+---
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/clarkOS/clark
-cd clark/example/convex
-npm install && npm run dev
+git clone https://github.com/clarkOS/clark my-agent
+cd my-agent/example/convex
+npm install
+npm run demo  # No API keys needed
 ```
 
-<Tip>
-  See ClarkOS in action at [clark.wiki](https://clark.wiki)
-</Tip>
+Or with full configuration:
+
+```bash
+cp .env.example .env.local
+# Edit .env.local with your API keys
+npm run dev
+```
+
+---
 
 ## Documentation
 
 <CardGroup cols={2}>
   <Card title="Quickstart" href="/quickstart">
-    Deploy your first agent
+    Deploy your first agent in 5 minutes
   </Card>
   <Card title="Core Concepts" href="/concepts/agents">
     Understand the architecture
@@ -126,19 +154,15 @@ npm install && npm run dev
   </Card>
 </CardGroup>
 
-## Links
+---
+
+## Community
 
 <CardGroup cols={2}>
-  <Card title="GitHub" href="https://github.com/clarkOS/clark">
+  <Card title="GitHub" icon="github" href="https://github.com/clarkOS/clark">
     Star and contribute
   </Card>
-  <Card title="Live Demo" href="https://clark.wiki">
-    See ClarkOS in action
-  </Card>
-  <Card title="Example Agent" href="https://github.com/clarkOS/clark/tree/main/example/convex">
-    Reference implementation
-  </Card>
-  <Card title="X" href="https://x.com/clarkwiki">
-    Follow for updates
+  <Card title="X / Twitter" icon="twitter" href="https://x.com/clarkwiki">
+    Follow @clarkwiki
   </Card>
 </CardGroup>

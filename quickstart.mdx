@@ -8,30 +8,30 @@ description: "Deploy your first ClarkOS agent in under 5 minutes"
 Before you begin, make sure you have:
 
 - **Node.js 18+** installed
-- **npm** or **pnpm** package manager
-- An **OpenRouter API key** (or compatible LLM provider)
+- **npm** package manager
+- An **OpenRouter API key** (optional - demo mode works without keys)
 
 <Tip>
-  Don't have an OpenRouter key? [Get one free](https://openrouter.ai) with $5 in credits.
+  Don't have an OpenRouter key? Try **demo mode** first - it runs with an in-memory backend and sample data, no API keys required.
 </Tip>
 
 ## Create Your Agent
 
 <Steps>
   <Step title="Clone the repository">
-    Clone the ClarkOS repository and navigate to the example agent:
+    Clone the ClarkOS SDK:
 
     ```bash
-    git clone https://github.com/clarkOS/clark
-    cd clark/example/convex
+    git clone https://github.com/clarkOS/clark my-agent
+    cd my-agent/example/convex
     ```
 
-    The [example agent](https://github.com/clarkOS/clark/tree/main/example/convex) gives you a fully-configured project with:
+    This gives you a fully-configured project with:
     - Convex backend setup
     - TypeScript configuration
-    - Core framework code
-    - Development scripts
-  </Step></invoke>
+    - Terminal UI (React Ink)
+    - 179 passing tests
+  </Step>
 
   <Step title="Install dependencies">
     Install the required packages:
@@ -41,7 +41,27 @@ Before you begin, make sure you have:
     ```
   </Step>
 
-  <Step title="Configure your environment">
+  <Step title="Run the doctor (optional)">
+    Validate your environment:
+
+    ```bash
+    npm run doctor
+    ```
+
+    This checks Node version, environment variables, and dependencies.
+  </Step>
+
+  <Step title="Try demo mode (no keys needed)">
+    Start the agent with an in-memory backend:
+
+    ```bash
+    npm run demo
+    ```
+
+    This runs the terminal UI with sample data. Great for exploring before configuring API keys.
+  </Step>
+
+  <Step title="Or configure for full mode">
     Set up your environment variables:
 
     ```bash
@@ -51,63 +71,81 @@ Before you begin, make sure you have:
     Edit `.env.local` with your API keys:
 
     ```bash
-    NEXT_PUBLIC_CONVEX_URL=your-convex-url
+    CONVEX_URL=https://your-project.convex.cloud
     OPENROUTER_KEY=your-openrouter-key
-    TICK_TOKEN=your-tick-token
+    GEMINI_API_KEY=your-gemini-key
     ```
-  </Step>
 
-  <Step title="Start the development server">
-    Launch your agent locally:
+    Then run:
 
     ```bash
     npm run dev
     ```
-
-    This runs both Convex and Next.js. Your agent is now running with:
-    - Real-time state updates
-    - HTTP API endpoints
-    - Memory persistence
   </Step>
 </Steps>
+
+## Terminal UI
+
+The SDK includes a terminal-based interface built with React Ink:
+
+```
+┌─────────────────────────────────────────────┐
+│  CLARK - Autonomous Agent                    │
+│  Mood: curious | Health: 78 | Routine: day  │
+├─────────────────────────────────────────────┤
+│      ╭──────────╮                           │
+│      │  ◉    ◉  │                           │
+│      │    ──    │                           │
+│      ╰──────────╯                           │
+└─────────────────────────────────────────────┘
+```
+
+### Keyboard Controls
+
+| Key | Action |
+|-----|--------|
+| `q` | Quit |
+| `r` | Refresh data |
+| `m` | Toggle radio panel |
+| `v` | Toggle view mode |
+| `Ctrl+C` | Force quit |
 
 ## Your First Tick
 
 The **tick** is the heartbeat of your agent. Every tick, your agent:
 
 1. Loads its current state and memories
-2. Gathers context (news, knowledge, recent activity)
-3. Processes through the LLM
-4. Updates state and creates new memories
-5. Optionally generates artifacts (tweets, images, etc.)
+2. Gathers context (knowledge, recent activity)
+3. Calculates routine from current time
+4. Executes plugin hooks
+5. Updates state (health drift, counters)
 
-Trigger a manual tick:
+To trigger a tick programmatically:
 
-```bash
-curl -X POST http://localhost:3001/tick \
-  -H "Authorization: Bearer your-tick-token"
+```typescript
+import { Agent, ConvexBackend } from './src';
+
+const agent = new Agent({
+  backend: new ConvexBackend({ url: process.env.CONVEX_URL! }),
+});
+
+await agent.tick();
 ```
-
-Or watch it tick automatically based on your configured interval.
 
 ## Explore the API
 
-Your agent exposes several HTTP endpoints:
+Your agent exposes HTTP endpoints via the Convex backend:
 
-<CardGroup cols={2}>
-  <Card title="GET /state" icon="circle-info">
-    Current agent state (mood, health, routine)
-  </Card>
-  <Card title="GET /memories" icon="brain">
-    Query stored memories with filters
-  </Card>
-  <Card title="POST /tick" icon="play">
-    Manually trigger an agent tick
-  </Card>
-  <Card title="GET /consciousness/thoughts" icon="lightbulb">
-    Recent synthesized thoughts
-  </Card>
-</CardGroup>
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check |
+| `/state` | GET | Current agent state |
+| `/memories` | GET | Query memories |
+| `/memories` | POST | Store a memory |
+| `/memories/core` | GET | Core memories |
+| `/memories/stats` | GET | Memory statistics |
+| `/knowledge` | GET | Knowledge items |
+| `/logs` | GET | Activity logs |
 
 ## Add a Plugin
 
@@ -145,44 +183,16 @@ const agent = new Agent({
   plugins: [loggerPlugin]
 });
 
-// Execute a tick
 await agent.tick();
 ```
 
-## Deploy to Production
+## Run the Tests
 
-When you're ready to go live:
+The SDK includes 179 tests:
 
-<Steps>
-  <Step title="Deploy Convex backend">
-    ```bash
-    npx convex deploy
-    ```
-  </Step>
-
-  <Step title="Deploy frontend (optional)">
-    Deploy to Vercel, Netlify, or any static host:
-
-    ```bash
-    npm run build
-    vercel deploy
-    ```
-  </Step>
-
-  <Step title="Set up scheduled ticks">
-    Configure a cron job or use Convex's built-in scheduler:
-
-    ```typescript
-    // convex/crons.ts
-    import { cronJobs } from "convex/server";
-
-    const crons = cronJobs();
-    crons.interval("agent tick", { minutes: 5 }, "tick:run");
-
-    export default crons;
-    ```
-  </Step>
-</Steps>
+```bash
+npm test
+```
 
 ## Next Steps
 

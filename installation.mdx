@@ -5,124 +5,100 @@ description: "Set up ClarkOS in your project"
 
 ## Clone the Repository
 
-The fastest way to get started is using the [example agent](https://github.com/clarkOS/clark/tree/main/example/convex):
+The fastest way to get started:
 
 ```bash
-git clone https://github.com/clarkOS/clark
-cd clark/example/convex
+git clone https://github.com/clarkOS/clark my-agent
+cd my-agent/example/convex
 npm install
 ```
 
-This gives you a complete reference implementation with Convex backend, core framework code, and all dependencies configured.
+This gives you a complete project with:
+- Convex backend schema and functions
+- TypeScript source code
+- Terminal UI (React Ink)
+- 179 passing tests
+- Environment template
 
-<Tip>
-  See ClarkOS in action at [clark.wiki](https://clark.wiki)
-</Tip>
+## Quick Validation
 
-## Manual Installation
+Run the doctor script to check your setup:
 
-For existing projects or custom setups:
+```bash
+npm run doctor
+```
 
-<Steps>
-  <Step title="Install packages">
-    ```bash
-    npm install convex
-    ```
-  </Step>
+This validates Node version, dependencies, and environment configuration.
 
-  <Step title="Initialize Convex">
-    ```bash
-    npx convex init
-    ```
+## Try Demo Mode
 
-    This creates the `convex/` directory for your backend functions.
-  </Step>
+No API keys? No problem. Run with an in-memory backend:
 
-  <Step title="Add schema">
-    Create `convex/schema.ts`:
+```bash
+npm run demo
+```
 
-    ```typescript
-    import { defineSchema, defineTable } from "convex/server";
-    import { v } from "convex/values";
-
-    export default defineSchema({
-      // Agent state (singleton)
-      state: defineTable({
-        mood: v.string(),
-        health: v.number(),
-        routine: v.string(),
-        volatility: v.number(),
-        summary: v.string(),
-        updatedAt: v.number(),
-      }),
-
-      // Activity logs
-      logs: defineTable({
-        mood: v.string(),
-        health: v.number(),
-        routine: v.string(),
-        summary: v.string(),
-        detail: v.string(),
-        timestamp: v.number(),
-      }).index("by_timestamp", ["timestamp"]),
-
-      // Memory system
-      memories: defineTable({
-        type: v.string(),
-        content: v.string(),
-        embedding: v.optional(v.array(v.float64())),
-        importance: v.number(),
-        createdAt: v.number(),
-      })
-        .index("by_type", ["type"])
-        .index("by_importance", ["importance"]),
-    });
-    ```
-  </Step>
-
-  <Step title="Create tick function">
-    Create `convex/tick.ts` with your agent's execution logic. See the [basic agent example](/examples/basic-agent) for a complete implementation.
-  </Step>
-</Steps>
+This starts the terminal UI with sample data, letting you explore the framework before configuring external services.
 
 ## Environment Variables
 
-Create `.env.local`:
+Copy the template:
 
 ```bash
-# Required
-NEXT_PUBLIC_CONVEX_URL=your-convex-deployment-url
-OPENROUTER_KEY=your-openrouter-api-key
+cp .env.example .env.local
+```
 
-# Optional
-GEMINI_API_KEY=your-gemini-key  # For embeddings
-TICK_TOKEN=secure-random-token  # Auth for tick endpoint
-WRITE_TOKEN=secure-random-token # Auth for write operations
+Edit `.env.local`:
+
+```bash
+# Required for full mode
+CONVEX_URL=https://your-project.convex.cloud
+OPENROUTER_KEY=your-openrouter-api-key
+GEMINI_API_KEY=your-gemini-key
+
+# Optional - auth tokens
+TICK_TOKEN=secure-random-token
+WRITE_TOKEN=secure-random-token
 ```
 
 ### Getting API Keys
 
-**Convex URL** - Run `npx convex dev` and copy the deployment URL.
-
-**OpenRouter Key** - Sign up at [openrouter.ai](https://openrouter.ai) and create an API key.
-
-**Gemini API Key** - Create at [Google AI Studio](https://aistudio.google.com) for embeddings.
+| Service | Purpose | URL |
+|---------|---------|-----|
+| **Convex** | Backend | Run `npx convex dev` and copy deployment URL |
+| **OpenRouter** | LLM | [openrouter.ai](https://openrouter.ai) |
+| **Gemini** | Embeddings (free) | [aistudio.google.com](https://aistudio.google.com/apikey) |
 
 ## Project Structure
 
 ```
-my-agent/
-├── app/                    # Next.js frontend
-│   ├── page.tsx
-│   └── layout.tsx
-├── convex/                 # Convex backend
-│   ├── _generated/         # Auto-generated
-│   ├── schema.ts           # Database schema
-│   ├── tick.ts             # Tick execution
-│   ├── http.ts             # HTTP endpoints
-│   └── memory/             # Memory functions
-├── .env.local              # Environment variables
-└── package.json
+clark/
+├── README.md
+├── docs/                    # Audit documentation
+├── scripts/
+│   └── doctor.js            # Preflight validation
+└── example/
+    └── convex/              # Reference implementation
+        ├── .env.example     # Environment template
+        ├── package.json
+        ├── convex/          # Convex backend
+        │   ├── schema.ts    # Database schema
+        │   ├── http.ts      # HTTP endpoints
+        │   ├── state.ts     # State queries/mutations
+        │   ├── memories.ts  # Memory operations
+        │   ├── knowledge.ts # Knowledge operations
+        │   └── logs.ts      # Logging
+        ├── src/
+        │   ├── cli.tsx      # CLI entry point
+        │   ├── core/        # Agent runtime, tick system
+        │   ├── memory/      # Memory store, deduplication
+        │   ├── knowledge/   # Knowledge base
+        │   ├── plugins/     # Plugin system
+        │   ├── llm/         # LLM & embedding clients
+        │   ├── services/    # Background services
+        │   ├── templates/   # Prompt templates
+        │   └── ui/          # Terminal UI (Ink + React)
+        └── tests/           # Jest tests (179 total)
 ```
 
 ## Verify Installation
@@ -133,12 +109,51 @@ Start the development server:
 npm run dev
 ```
 
-Check the health endpoint:
+You should see the terminal UI with the agent status.
+
+### Check API Endpoints
+
+If using the Convex backend:
 
 ```bash
+# Health check
 curl http://localhost:3001/health
-# {"status":"ok"}
+
+# Expected response:
+# {"ok":true,"service":"clark-agent","now":...,"lastTick":...}
 ```
+
+```bash
+# Agent state
+curl http://localhost:3001/state
+```
+
+## Run Tests
+
+Validate everything works:
+
+```bash
+npm test
+```
+
+All 179 tests should pass.
+
+## Set Up Your Own Convex Project
+
+To use your own Convex deployment:
+
+```bash
+# Install Convex CLI
+npm install -g convex
+
+# Initialize new project
+npx convex init
+
+# Start dev server
+npx convex dev
+```
+
+Then update `CONVEX_URL` in `.env.local` with your new deployment URL.
 
 ## Next Steps
 
