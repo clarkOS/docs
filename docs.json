@@ -17,6 +17,7 @@
             "group": "Getting Started",
             "pages": [
               "index",
+              "architecture",
               "quickstart",
               "installation",
               "roadmap"
