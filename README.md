@@ -1,8 +1,14 @@
-# ClarkOS Agent Framework Documentation
+# ClarkOS
 
-Official documentation for the ClarkOS Agent Framework - the next generation of autonomous AI agents.
+**C**ontinuously **L**earning **A**gentic **R**ealtime **K**nowledgebase **OS**
 
-## About ClarkOS
+[Live Demo](https://clark.wiki) · [Docs](https://docs.clarkos.dev) · [X](https://x.com/clarkwiki)
+
+```bash
+git clone https://github.com/clarkOS/clark
+```
+
+## About
 
 ClarkOS is a TypeScript-first agent framework that goes beyond simple chatbots. Built on Convex's serverless infrastructure, ClarkOS agents have:
 
@@ -11,9 +17,14 @@ ClarkOS is a TypeScript-first agent framework that goes beyond simple chatbots. 
 - **True Autonomy** - Tick-based execution with mood, health, and routine systems
 - **Plugin Architecture** - Extensible with official and community plugins
 
+## Live Demo
+
+See ClarkOS in action at [clark.wiki](https://clark.wiki)
+
 ## Documentation
 
-Visit [docs.clarkos.dev](https://docs.clarkos.dev) for the full documentation.
+- Full docs: [docs.clarkos.dev](https://docs.clarkos.dev)
+- Docs repo: [github.com/clarkOS/docs](https://github.com/clarkOS/docs)
 
 ### Quick Links
 
@@ -37,10 +48,12 @@ View your local preview at `http://localhost:3000`.
 
 We welcome contributions! Please see our [contribution guidelines](https://docs.clarkos.dev/contributing) for details.
 
-## Community
+## Links
 
-- [GitHub](https://github.com/clarkos) - Star the repo and contribute
-- [Twitter](https://twitter.com/clarkos) - Follow for updates
+- [GitHub](https://github.com/clarkOS/clark)
+- [Docs](https://docs.clarkos.dev)
+- [Live Demo](https://clark.wiki)
+- [X](https://x.com/clarkwiki)
 
 ## License
 
