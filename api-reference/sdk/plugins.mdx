@@ -7,7 +7,7 @@ description: "SDK reference for building plugins"
 
 Plugins extend agent functionality by hooking into the tick lifecycle, exposing actions, and managing state. They're the primary way to add capabilities like social posting, trading, or custom integrations.
 
-**Reference:** `src/plugins/types.ts`
+**Reference:** [`src/plugins/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/plugins/types.ts)
 
 ## Plugin Interface
 
@@ -41,7 +41,7 @@ The context passed to `onTick`:
 | `knowledge` | Knowledge[] | Retrieved knowledge items |
 | `recentLogs` | Log[] | Recent activity logs |
 
-**Reference:** `TickContext` interface in `src/core/types.ts`
+**Reference:** `TickContext` interface in [`src/core/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/types.ts)
 
 ## Creating Plugins
 
@@ -72,7 +72,7 @@ export function createMyPlugin(config: MyConfig): Plugin {
 }
 ```
 
-**Reference:** See factory examples in `plugins/social.ts`, `plugins/markets.ts`
+**Reference:** See factory examples in the [`src/plugins`](https://github.com/clarkOS/clark/tree/main/example/convex/src/plugins) directory
 
 ## Plugin Actions
 
@@ -103,7 +103,7 @@ const plugin = agent.getPlugin("name");
 const all = agent.getPlugins();
 ```
 
-**Reference:** `agent.use()` in `src/core/agent.ts`
+**Reference:** `agent.use()` in [`src/core/agent.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/agent.ts)
 
 ## Dependencies
 
@@ -121,7 +121,7 @@ Plugins can declare dependencies that must load first:
 
 The agent validates dependency order during registration.
 
-**Reference:** `loadPlugins()` in `src/plugins/loader.ts`
+**Reference:** `loadPlugins()` in [`src/plugins/loader.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/plugins/loader.ts)
 
 ## Configuration Patterns
 
@@ -156,7 +156,7 @@ const agent = createAgent({
 const result = await agent.tick();
 ```
 
-**Reference:** Test patterns in `tests/plugins/`
+**Reference:** Test patterns in [`tests/plugins/`](https://github.com/clarkOS/clark/tree/main/example/convex/tests/plugins)
 
 ## Next Steps
 

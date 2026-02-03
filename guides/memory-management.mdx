@@ -32,7 +32,7 @@ The SDK uses type-specific thresholds. Lower thresholds allow more merging; high
 | Procedural | 0.97 | Keep high—patterns must be precise |
 | Reflection | 0.90 | Raise if self-insights feel repetitive |
 
-**Reference:** `DEDUP_THRESHOLDS` in `src/memory/deduplication.ts`
+**Reference:** `DEDUP_THRESHOLDS` in [`src/memory/deduplication.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/deduplication.ts)
 
 ### Custom Thresholds
 
@@ -62,7 +62,7 @@ const similar = findSimilarMemories(targetMemory, allMemories, {
 });
 ```
 
-**Reference:** `findSimilarMemories()` in `src/memory/deduplication.ts`
+**Reference:** `findSimilarMemories()` in [`src/memory/deduplication.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/deduplication.ts)
 
 ## Salience and Confidence
 
@@ -83,7 +83,7 @@ const salience = calculateSalience("Breaking: Major announcement!");  // ~0.8
 const confidence = calculateConfidence("Price is $100", "api");       // ~0.9
 ```
 
-**Reference:** Both functions in `src/memory/deduplication.ts`
+**Reference:** Both functions in [`src/memory/deduplication.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/deduplication.ts)
 
 ## Embedding Providers
 
@@ -102,7 +102,7 @@ Configuration is loaded from environment variables:
 | `OPENAI_API_KEY` | OpenAI API key |
 | `EMBEDDING_PROVIDER` | "gemini" or "openai" |
 
-**Reference:** `embeddingConfigFromEnv()` in `src/llm/embeddings.ts`
+**Reference:** `embeddingConfigFromEnv()` in [`src/llm/embeddings.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/llm/embeddings.ts)
 
 ## Retrieval Patterns
 
@@ -126,7 +126,7 @@ const stats = await agent.memory.getStats();
 // { total, byType, byScope, averageImportance }
 ```
 
-**Reference:** `MemoryStore` interface in `src/memory/store.ts`
+**Reference:** `MemoryStore` interface in [`src/memory/store.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/store.ts)
 
 ## Memory Consolidation (Roadmap)
 

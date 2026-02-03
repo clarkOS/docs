@@ -19,7 +19,7 @@ ClarkOS implements a cognitive memory system with five distinct types, vector em
 
 The **reflection** type enables metacognitive capabilities—agents can reason about their own patterns.
 
-**Reference:** Types defined in `src/core/types.ts`, thresholds in `src/memory/deduplication.ts`
+**Reference:** Types defined in [`src/core/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/types.ts), thresholds in [`src/memory/deduplication.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/deduplication.ts)
 
 ## Memory Structure
 
@@ -38,7 +38,7 @@ Each memory includes rich metadata:
 | `accessCount` | Times accessed |
 | `unique` | Passed deduplication check |
 
-**Reference:** Full interface in `src/core/types.ts`
+**Reference:** Full interface in [`src/core/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/types.ts)
 
 Embeddings are generated and used for deduplication/search but stored separately from the core Memory structure.
 
@@ -52,7 +52,7 @@ ClarkOS uses a **3-tier deduplication strategy** to prevent redundant memories:
 
 Lower thresholds (emotional: 0.88) allow similar feelings to merge. Higher thresholds (procedural: 0.97) require near-exact matches to merge patterns.
 
-**Reference:** `checkDuplication()` and `findSimilarMemories()` in `src/memory/deduplication.ts`
+**Reference:** `checkDuplication()` and `findSimilarMemories()` in [`src/memory/deduplication.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/deduplication.ts)
 
 ## Using the Memory Store
 
@@ -79,7 +79,7 @@ const results = await agent.memory.search({
 });
 ```
 
-**Reference:** `src/memory/store.ts` for MemoryStore implementation
+**Reference:** [`src/memory/store.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/store.ts) for MemoryStore implementation
 
 ## Salience and Confidence
 
@@ -93,7 +93,7 @@ Two helper functions score memories automatically:
 - API sources score higher than user input
 - Verified facts score higher than opinions
 
-**Reference:** `calculateSalience()` and `calculateConfidence()` in `src/memory/deduplication.ts`
+**Reference:** `calculateSalience()` and `calculateConfidence()` in [`src/memory/deduplication.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/deduplication.ts)
 
 ## Embeddings
 
@@ -112,7 +112,7 @@ const result = await embedder.embed("Hello world");
 const similarity = cosineSimilarity(embedding1, embedding2);
 ```
 
-**Reference:** `src/llm/embeddings.ts` for embedding client and similarity functions
+**Reference:** [`src/llm/embeddings.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/llm/embeddings.ts) for embedding client and similarity functions
 
 ## Memory Linking (Roadmap)
 

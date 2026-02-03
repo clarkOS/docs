@@ -5,7 +5,7 @@ description: "Data services included with the ink SDK"
 
 The ink SDK includes three built-in services for common data needs. Services run independently of the tick cycle, caching data for efficient access.
 
-**Reference:** `src/services/` directory
+**Reference:** [`src/services/`](https://github.com/clarkOS/clark/tree/main/example/convex/src/services) directory
 
 ## Service Interface
 
@@ -20,7 +20,7 @@ All services implement this interface:
 | `refresh()` | Force immediate refresh |
 | `getHealth()` | Get status and stats |
 
-**Reference:** `Service` interface in `src/services/types.ts`
+**Reference:** `Service` interface in [`src/services/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/types.ts)
 
 ## ChanService
 
@@ -61,7 +61,7 @@ await chan.start();
 const threads = await chan.getData<ChanThread[]>();
 ```
 
-**Reference:** `src/services/chan.ts`
+**Reference:** [`src/services/chan.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/chan.ts)
 
 ## NewsService
 
@@ -101,7 +101,7 @@ await news.start();
 const items = await news.getData<NewsItem[]>();
 ```
 
-**Reference:** `src/services/news.ts`
+**Reference:** [`src/services/news.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/news.ts)
 
 ## MarketService
 
@@ -135,7 +135,7 @@ await market.start();
 const data = await market.getData<MarketData>();
 ```
 
-**Reference:** `src/services/market.ts`
+**Reference:** [`src/services/market.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/market.ts)
 
 ## Service Types
 
@@ -149,7 +149,7 @@ const data = await market.getData<MarketData>();
 | `storage` | File/data storage |
 | `custom` | User-defined services |
 
-**Reference:** `ServiceType` enum in `src/services/types.ts`
+**Reference:** `ServiceType` enum in [`src/services/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/types.ts)
 
 ## Creating All Built-ins
 

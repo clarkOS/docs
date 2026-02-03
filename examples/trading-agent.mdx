@@ -7,6 +7,10 @@ description: "An agent that monitors markets and makes paper trades"
 
 This example demonstrates a trading agent that monitors cryptocurrency markets, forms opinions based on data, and makes paper trading decisions. It shows how to build plugins that work together.
 
+<Card title="View Source" icon="github" href="https://github.com/clarkOS/clark/tree/main/example/convex">
+  See the complete example agent implementation on GitHub
+</Card>
+
 ## What It Does
 
 - Fetches real-time market data from CoinGecko
@@ -47,7 +51,7 @@ export function createMarketsPlugin(config: {
 }
 ```
 
-**Reference:** See `plugins/markets.ts` pattern in the repository.
+**Reference:** See [`src/services/market.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/market.ts) in the example agent.
 
 ## Paper Trading Plugin
 
@@ -70,7 +74,7 @@ export function createPaperTradingPlugin(config: {
 }
 ```
 
-**Reference:** See `plugins/paper-trading.ts` pattern in the repository.
+**Reference:** See the [`src/plugins`](https://github.com/clarkOS/clark/tree/main/example/convex/src/plugins) directory for plugin patterns.
 
 ## Plugin Dependencies
 

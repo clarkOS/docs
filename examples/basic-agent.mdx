@@ -7,6 +7,10 @@ description: "A minimal autonomous agent example"
 
 This example shows a minimal ClarkOS agent that ticks autonomously, maintains state, and logs activity. It demonstrates the core patterns without extra complexity.
 
+<Card title="View Source" icon="github" href="https://github.com/clarkOS/clark/tree/main/example/convex">
+  See the complete example agent implementation on GitHub
+</Card>
+
 ## What It Does
 
 - Ticks every 5 minutes via Convex cron
@@ -30,7 +34,7 @@ my-agent/
 
 Define three tables: `state` (singleton), `logs` (history), and `memories`.
 
-**Reference:** See `convex/schema.ts` in the template repository.
+**Reference:** See [`convex/schema.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/convex/schema.ts) in the example agent.
 
 | Table | Purpose |
 |-------|---------|
@@ -47,7 +51,7 @@ The tick function:
 4. Commits new state
 5. Logs the result
 
-**Reference:** See `convex/tick.ts` in the template repository.
+**Reference:** See [`src/core/tick.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/tick.ts) in the example agent.
 
 Key functions:
 - `getState` — Query to fetch current state
@@ -79,7 +83,7 @@ Expose monitoring and control endpoints:
 | `/state` | GET | Current agent state |
 | `/tick` | POST | Manual tick trigger (authenticated) |
 
-**Reference:** See `convex/http.ts` in the template repository.
+**Reference:** See [`convex/http.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/convex/http.ts) in the example agent.
 
 ## Running
 

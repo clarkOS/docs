@@ -12,7 +12,7 @@ The ink SDK provides two extension mechanisms: **Plugins** for tick lifecycle ho
 | Purpose | React to ticks, expose actions | Fetch and cache data |
 | Lifecycle | Tied to tick cycle | Independent background |
 | Interface | `onTick`, `actions` | `getData`, `refresh` |
-| Reference | `src/plugins/types.ts` | `src/services/types.ts` |
+| Reference | [`src/plugins/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/plugins/types.ts) | [`src/services/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/types.ts) |
 
 ## Plugin Interface
 
@@ -27,7 +27,7 @@ Plugins hook into the agent tick lifecycle:
 | `onTick` | function | Called after each tick |
 | `actions` | object | Callable methods |
 
-**Reference:** `Plugin` interface in `src/plugins/types.ts`
+**Reference:** `Plugin` interface in [`src/plugins/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/plugins/types.ts)
 
 ## Service Interface
 
@@ -42,15 +42,15 @@ Services run independently, caching data:
 | `refresh()` | Force refresh |
 | `getHealth()` | Status and stats |
 
-**Reference:** `Service` interface in `src/services/types.ts`
+**Reference:** `Service` interface in [`src/services/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/types.ts)
 
 ## Built-in Services
 
 | Service | Description | Reference |
 |---------|-------------|-----------|
-| `ChanService` | 4chan SFW board threads | `src/services/chan.ts` |
-| `NewsService` | RSS/API news aggregation | `src/services/news.ts` |
-| `MarketService` | Crypto price data | `src/services/market.ts` |
+| `ChanService` | 4chan SFW board threads | [`src/services/chan.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/chan.ts) |
+| `NewsService` | RSS/API news aggregation | [`src/services/news.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/news.ts) |
+| `MarketService` | Crypto price data | [`src/services/market.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/market.ts) |
 
 ```typescript
 import { createChanService, createNewsService, createMarketService } from './src/services';
@@ -74,7 +74,7 @@ export const myPlugin = definePlugin({
 });
 ```
 
-**Reference:** `definePlugin()` in `src/plugins/loader.ts`
+**Reference:** `definePlugin()` in [`src/plugins/loader.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/plugins/loader.ts)
 
 ## Plugin Utilities
 
@@ -85,7 +85,7 @@ export const myPlugin = definePlugin({
 | `loadPlugin(path)` | Dynamic import |
 | `sortPluginsByDependencies(plugins)` | Resolve load order |
 
-**Reference:** `src/plugins/loader.ts`
+**Reference:** [`src/plugins/loader.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/plugins/loader.ts)
 
 ## Service Types
 
@@ -99,7 +99,7 @@ export const myPlugin = definePlugin({
 | `storage` | File storage |
 | `custom` | User-defined |
 
-**Reference:** `ServiceType` enum in `src/services/types.ts`
+**Reference:** `ServiceType` enum in [`src/services/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/services/types.ts)
 
 ## Next Steps
 

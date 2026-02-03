@@ -22,7 +22,7 @@ Every plugin implements this interface:
 | `onTick()` | No | Called after every tick |
 | `actions` | No | Callable functions exposed to agent |
 
-**Reference:** `Plugin` interface in `src/plugins/types.ts`
+**Reference:** `Plugin` interface in [`src/plugins/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/plugins/types.ts)
 
 ## Basic Plugin
 
@@ -90,7 +90,7 @@ Called after every tick with full context. Use for reactive behavior:
 - Access memories and knowledge
 - Trigger external actions
 
-**Reference:** `TickContext` in `src/core/types.ts`
+**Reference:** `TickContext` in [`src/core/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/types.ts)
 
 ## Plugin Actions
 
@@ -129,7 +129,7 @@ export const enhancedPlugin: Plugin = {
 };
 ```
 
-**Reference:** `sortPluginsByDependencies()` in `src/plugins/loader.ts` handles topological sorting
+**Reference:** `sortPluginsByDependencies()` in [`src/plugins/loader.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/plugins/loader.ts) handles topological sorting
 
 ## Registering Plugins
 
@@ -172,7 +172,7 @@ await agent.tick();
 // Assert expected behavior
 ```
 
-**Reference:** `MemoryBackend` in `src/backend/memory.ts`
+**Reference:** `MemoryBackend` in [`src/backend/memory.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/backend/memory.ts)
 
 ## Best Practices
 

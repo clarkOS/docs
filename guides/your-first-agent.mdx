@@ -28,8 +28,11 @@ This is not a chatbot. Nova doesn't wait for messages—it thinks continuously.
 
 ## Step 1: Create Project
 
+Clone the repository and use the [example agent](https://github.com/clarkOS/clark/tree/main/example/convex) as your starting point:
+
 ```bash
-git clone https://github.com/clarkos/clarkos nova
+git clone https://github.com/clarkOS/clark
+cp -r clark/example/convex nova
 cd nova
 npm install
 cp .env.example .env.local
@@ -39,6 +42,10 @@ Configure `.env.local` with your API keys:
 - `OPENROUTER_KEY` — LLM access
 - `GEMINI_API_KEY` — Embeddings
 - `TICK_TOKEN` — Authentication
+
+<Tip>
+  The example agent at [github.com/clarkOS/clark/tree/main/example/convex](https://github.com/clarkOS/clark/tree/main/example/convex) contains all the source code referenced in this guide.
+</Tip>
 
 ## Step 2: Define Character
 

@@ -22,7 +22,7 @@ Wake → Load State → Gather Context → Process LLM → Update State → Stor
 | Store Memories | Create new memories with embeddings |
 | Run Plugins | Execute `onTick` hooks on all plugins |
 
-**Reference:** `executeTick()` in `src/core/tick.ts`
+**Reference:** `executeTick()` in [`src/core/tick.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/tick.ts)
 
 ## Routine Calculation
 
@@ -35,7 +35,7 @@ The agent knows what time it is and adjusts behavior:
 | evening | 18-24 | -0.3 (more drain) |
 | overnight | 0-6 | +1.0 (rest) |
 
-**Reference:** `calculateRoutine()` in `src/core/tick.ts`
+**Reference:** `calculateRoutine()` in [`src/core/tick.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/tick.ts)
 
 ## Health Drift
 
@@ -43,7 +43,7 @@ Health drifts toward 75 (equilibrium) with routine modifiers applied. The formul
 
 When health drops below threshold, the agent enters **cryo mode** (hibernation) and skips normal processing until recovered.
 
-**Reference:** `calculateHealthDrift()` in `src/core/tick.ts`
+**Reference:** `calculateHealthDrift()` in [`src/core/tick.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/tick.ts)
 
 ## Tick Context
 
@@ -56,7 +56,7 @@ Plugins receive a `TickContext` with everything they need:
 | `knowledge` | Recent knowledge items |
 | `recentLogs` | Recent activity logs |
 
-**Reference:** `TickContext` interface in `src/core/types.ts`
+**Reference:** `TickContext` interface in [`src/core/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/types.ts)
 
 ## Triggering Ticks
 
@@ -89,7 +89,7 @@ runner.stop();   // Stop ticking
 
 The runner handles intervals, error recovery, and graceful shutdown.
 
-**Reference:** `createTickRunner()` in `src/core/tick.ts`
+**Reference:** `createTickRunner()` in [`src/core/tick.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/tick.ts)
 
 ## Configuration
 
@@ -99,7 +99,7 @@ The runner handles intervals, error recovery, and graceful shutdown.
 | `auto` | false | Start ticking automatically |
 | `maxRetries` | 3 | Retry attempts on failure |
 
-**Reference:** Tick config in `src/core/config.ts`
+**Reference:** Tick config in [`src/core/config.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/config.ts)
 
 ## Error Handling
 

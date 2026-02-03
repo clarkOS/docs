@@ -7,7 +7,7 @@ description: "SDK reference for the memory system"
 
 The `MemoryStore` interface provides methods for storing, retrieving, and managing agent memories.
 
-**Reference:** `src/memory/store.ts`
+**Reference:** [`src/memory/store.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/store.ts)
 
 ## Getting the Store
 
@@ -93,7 +93,7 @@ const stats = await memoryStore.getStats();
 
 ## Deduplication Utilities
 
-**Reference:** `src/memory/deduplication.ts`
+**Reference:** [`src/memory/deduplication.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/memory/deduplication.ts)
 
 ```typescript
 import { checkDuplication, findSimilarMemories, DEDUP_THRESHOLDS } from "./src/memory/deduplication";
@@ -127,7 +127,7 @@ const confidence = calculateConfidence("Data", "api"); // 0-1
 
 ## Embeddings
 
-**Reference:** `src/llm/embeddings.ts`
+**Reference:** [`src/llm/embeddings.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/llm/embeddings.ts)
 
 ```typescript
 import { createEmbeddingClient, cosineSimilarity } from "./src/llm";

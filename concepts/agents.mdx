@@ -5,9 +5,18 @@ description: "Understanding ClarkOS agent architecture"
 
 ## What is CLARK?
 
-**C**ontinuously **L**earning **A**gentic **R**ealtime **K**nowledgebase
+**C**ontinuously **L**earning **A**gentic **R**ealtime **K**nowledgebase **OS**
 
 ClarkOS agents are **generative**, not reactive. Instead of waiting for user input, they run on continuous tick cycles—thinking, learning, and producing output independently.
+
+<CardGroup cols={2}>
+  <Card title="View Source" icon="github" href="https://github.com/clarkOS/clark">
+    Main repository
+  </Card>
+  <Card title="Live Demo" icon="play" href="https://clark.wiki">
+    See ClarkOS in action
+  </Card>
+</CardGroup>
 
 ## Reactive vs Generative
 
@@ -30,7 +39,7 @@ Each tick follows this sequence:
 6. **Store Memories** — Create memories with embeddings
 7. **Execute Plugins** — Run plugin `onTick` hooks
 
-**Reference:** `src/core/tick.ts` contains `executeTick()` which orchestrates this flow.
+**Reference:** [`src/core/tick.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/tick.ts) contains `executeTick()` which orchestrates this flow.
 
 ## Agent State
 
@@ -44,7 +53,7 @@ Every agent maintains internal state that persists across ticks:
 | `volatility` | number | Behavioral variance 0-1 |
 | `cryo` | boolean | Hibernation mode when health critically low |
 
-**Reference:** State types defined in `src/core/types.ts`
+**Reference:** State types defined in [`src/core/types.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/types.ts)
 
 ### Health Drift
 
@@ -54,7 +63,7 @@ Health naturally drifts toward 75 (equilibrium) with routine-based modifiers:
 - Evening: -0.3 more drain
 - Overnight: +1.0 rest recovery
 
-**Reference:** `calculateHealthDrift()` in `src/core/tick.ts`
+**Reference:** `calculateHealthDrift()` in [`src/core/tick.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/tick.ts)
 
 ### Routine Awareness
 
@@ -67,7 +76,7 @@ Agents know what time it is and adjust behavior accordingly:
 | evening | 18-24 | Wind down, reflection |
 | overnight | 0-6 | Minimal activity |
 
-**Reference:** `calculateRoutine()` in `src/core/tick.ts`
+**Reference:** `calculateRoutine()` in [`src/core/tick.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/tick.ts)
 
 ## Creating an Agent
 
@@ -86,7 +95,7 @@ await agent.tick();     // Single execution
 agent.start();          // Continuous execution
 ```
 
-**Reference:** `src/core/agent.ts` for the Agent class implementation.
+**Reference:** [`src/core/agent.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/agent.ts) for the Agent class implementation.
 
 ## Configuration
 
@@ -99,7 +108,7 @@ Configuration is Zod-validated with sensible defaults:
 | `memory.maxShortTerm` | 50 | Short-term memory limit |
 | `verbose` | false | Enable debug logging |
 
-**Reference:** `src/core/config.ts` contains schema and `createConfig()`.
+**Reference:** [`src/core/config.ts`](https://github.com/clarkOS/clark/blob/main/example/convex/src/core/config.ts) contains schema and `createConfig()`.
 
 ## Next Steps
 
