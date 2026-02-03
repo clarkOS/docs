@@ -5,9 +5,9 @@ description: "Build an autonomous thinking agent that demonstrates ClarkOS's uni
 
 ## Overview
 
-In this guide, you'll build **Nova**, an autonomous AI agent that thinks, learns, and evolves continuously. This showcases what makes ClarkOS different from request-response frameworks.
+In this guide, you'll build **CLARK**, an autonomous AI agent that thinks, learns, and evolves continuously. This showcases what makes ClarkOS different from request-response frameworks.
 
-## What Nova Does
+## What CLARK Does
 
 - Runs autonomously on 5-minute tick cycles
 - Forms 5 types of memories (episodic, semantic, emotional, procedural, reflection)
@@ -17,7 +17,7 @@ In this guide, you'll build **Nova**, an autonomous AI agent that thinks, learns
 - Evolves mood, health, and routine over time
 
 <Note>
-This is not a chatbot. Nova doesn't wait for messages—it thinks continuously.
+This is not a chatbot. CLARK doesn't wait for messages—it thinks continuously.
 </Note>
 
 ## Prerequisites
@@ -49,7 +49,7 @@ Configure `.env.local` with your API keys:
 
 ## Step 2: Define Character
 
-Create a character file that defines Nova's personality, interests, and voice.
+Create a character file that defines CLARK's personality, interests, and voice.
 
 **Reference:** See `convex/character.ts` in the template.
 
@@ -76,7 +76,7 @@ ClarkOS agents maintain rich internal state:
 
 ## Step 4: Memory Types
 
-Nova uses all 5 memory types:
+CLARK uses all 5 memory types:
 
 | Type | Example | Dedup Threshold |
 |------|---------|-----------------|
@@ -118,7 +118,7 @@ A thought becomes "brilliant" when multiple high-importance inputs share entitie
 
 ## Step 7: Self-Reflection
 
-Every 10 ticks, Nova generates a reflection:
+Every 10 ticks, CLARK generates a reflection:
 
 1. Gather recent emotional memories
 2. Identify procedural patterns
@@ -131,7 +131,7 @@ This creates genuine self-awareness over time.
 
 ## Step 8: Daily Journals
 
-At midnight, Nova consolidates the day's experiences:
+At midnight, CLARK consolidates the day's experiences:
 
 1. Gather all memories from past 24 hours
 2. Count brilliant thoughts
@@ -164,7 +164,7 @@ Watch the Convex dashboard for:
 - Reflections every 10 ticks
 - Daily journals at midnight
 
-## Querying Nova
+## Querying CLARK
 
 ```bash
 curl http://localhost:3001/state
@@ -187,13 +187,13 @@ curl http://localhost:3001/consciousness/brilliant?limit=5
 
 ## Key Insight
 
-The shift from ElizaOS to ClarkOS is **reactive to generative**. Nova doesn't respond to the world—it continuously processes, understands, and creates.
+The shift from ElizaOS to ClarkOS is **reactive to generative**. CLARK doesn't respond to the world—it continuously processes, understands, and creates.
 
 ## Next Steps
 
 <CardGroup cols={2}>
   <Card title="Custom Plugins" href="/guides/custom-plugins">
-    Extend Nova with new capabilities.
+    Extend CLARK with new capabilities.
   </Card>
   <Card title="Memory Management" href="/guides/memory-management">
     Optimize memory for your domain.
