@@ -90,7 +90,7 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/clarkos",
+          "href": "https://github.com/clarkOS/clark",
           "icon": "github"
         }
       ]
@@ -114,8 +114,8 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/clarkos",
-      "github": "https://github.com/clarkos"
+      "x": "https://x.com/clarkwiki",
+      "github": "https://github.com/clarkOS/clark"
     }
   }
 }
